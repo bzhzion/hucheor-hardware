@@ -14,6 +14,7 @@
 
 #include "audio_player.h"
 #include "config_server.h"
+#include "schedule.h"
 
 // Wiring: to be confirmed once the first prototype is actually built.
 static const int PIN_SPI_SCK = 18;
@@ -72,6 +73,7 @@ void setup() {
     Serial.println("Hucheor: audio player init failed");
   }
 
+  Schedule::begin();
   ConfigServer::begin();
 
   Serial.println("Hucheor: listening on 868.3 MHz (no frame decoding yet)");
@@ -87,7 +89,12 @@ void loop() {
 
     if (matched) {
       Serial.println("Remote detected");
-      AudioPlayer::playWavFile("/message.wav");
+      const char *path = Schedule::isOpenNow() ? "/message_open.wav" : "/message_closed.wav";
+      if (!AudioPlayer::playWavFile(path)) {
+        // Shopkeeper only uploaded one generic message (or the schedule was
+        // never configured): fall back to it rather than staying silent.
+        AudioPlayer::playWavFile("/message.wav");
+      }
     }
   }
 }

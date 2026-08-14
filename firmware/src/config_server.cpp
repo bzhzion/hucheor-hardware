@@ -5,11 +5,14 @@
 #include <Preferences.h>
 #include <WiFi.h>
 
+#include "schedule.h"
+
 namespace {
 
 AsyncWebServer server(80);
 Preferences prefs;
-const char *MESSAGE_PATH = "/message.wav";
+const char *MESSAGE_PATH_OPEN = "/message_open.wav";
+const char *MESSAGE_PATH_CLOSED = "/message_closed.wav";
 const char *HTTP_USER = "admin";
 
 // A shop announcement has no business being long: this comfortably covers a
@@ -22,6 +25,9 @@ bool uploadTooLarge = false;
 
 char apPassword[13]; // 12 digits + null terminator
 char httpPassword[13];
+
+const char *WEEKDAY_NAMES[7] = {"Dimanche", "Lundi", "Mardi", "Mercredi",
+                                 "Jeudi",    "Vendredi", "Samedi"};
 
 // Generates a random 12-digit code (printable on a small label, no
 // ambiguous characters since it's digits only). Called once ever per
@@ -60,11 +66,12 @@ void loadOrCreateCredentials() {
 // Plain HTML, no external assets (works fully offline on the AP, no logo -
 // not worth the effort on a page this small), large touch targets and real
 // labels. Same brand palette/feel as the public website ("Le Heraut" theme:
-// parchment/ink/terracotta), condensed into a single small card since this
-// is the only thing on the page. System font stack instead of the site's
-// custom webfonts (self-hosted on cdn.breizhzion.com, unreachable from an
-// offline WiFi AP with no internet) - keeps it looking native on each phone
-// at zero extra bytes.
+// parchment/ink/terracotta), condensed into a small card since that is the
+// only content on the page. System font stack instead of the site's custom
+// webfonts (self-hosted on cdn.breizhzion.com, unreachable from an offline
+// WiFi AP with no internet) - keeps it looking native on each phone at zero
+// extra bytes. A tiny inline script auto-syncs the device clock from the
+// visiting phone's own clock (see Schedule) - the only JS on this page.
 #define HUCHEOR_STYLE_BLOCK \
   "<style>" \
   "*{box-sizing:border-box}" \
@@ -79,7 +86,7 @@ void loadOrCreateCredentials() {
   "box-shadow:0 12px 24px -16px rgba(36,23,8,.35);margin-top:1.25rem}" \
   "label{display:block;font-weight:700;margin-bottom:.5rem}" \
   ".hint{font-size:.85rem;color:#4a3420;margin:.4rem 0 1.4rem}" \
-  "input[type=file]{display:block;width:100%;padding:.6rem;" \
+  "input[type=file],input[type=time]{display:block;width:100%;padding:.6rem;" \
   "border:1px solid #cbb98f;border-radius:8px;background:#fff;color:#241708}" \
   "button{font-size:1.05rem;font-weight:700;padding:.8rem 1.75rem;" \
   "border-radius:999px;border:none;background:#b1451f;color:#f3e8d2;" \
@@ -87,7 +94,17 @@ void loadOrCreateCredentials() {
   "button:hover{background:#8a3417}" \
   "button:focus-visible,input:focus-visible{outline:3px solid #241708;outline-offset:2px}" \
   "a{color:#8a3417}" \
-  "</style>"
+  "nav{margin:1rem 0}" \
+  ".day-row{display:flex;align-items:center;gap:.75rem;padding:.6rem 0;" \
+  "border-bottom:1px solid #cbb98f}" \
+  ".day-row:last-child{border-bottom:none}" \
+  ".day-row label.day-name{flex:1 0 90px;margin:0;font-weight:700}" \
+  ".day-row input[type=time]{width:auto;flex:1}" \
+  "</style>" \
+  "<script>" \
+  "fetch('/time',{method:'POST',headers:{'Content-Type':'text/plain'}," \
+  "body:String(Math.floor(Date.now()/1000))}).catch(function(){});" \
+  "</script>"
 
 const char INDEX_HTML[] PROGMEM =
     "<!doctype html><html lang=\"fr\"><head>"
@@ -98,11 +115,20 @@ const char INDEX_HTML[] PROGMEM =
     "</head><body>"
     "<span class=\"eyebrow\">Configuration du boitier</span>"
     "<h1>Hucheor</h1>"
+    "<nav><a href=\"/schedule\">Horaires d'ouverture</a></nav>"
     "<div class=\"card\">"
-    "<form method=\"POST\" action=\"/upload\" enctype=\"multipart/form-data\">"
-    "<label for=\"wav\">Fichier audio (.wav)</label>"
-    "<input type=\"file\" id=\"wav\" name=\"wav\" accept=\"audio/wav\" required>"
-    "<p class=\"hint\">Le message que le boitier annoncera. Format WAV, 2 Mo maximum.</p>"
+    "<form method=\"POST\" action=\"/upload/open\" enctype=\"multipart/form-data\">"
+    "<label for=\"wav-open\">Message quand le commerce est ouvert (.wav)</label>"
+    "<input type=\"file\" id=\"wav-open\" name=\"wav\" accept=\"audio/wav\" required>"
+    "<p class=\"hint\">Format WAV, 2 Mo maximum.</p>"
+    "<button type=\"submit\">Envoyer</button>"
+    "</form>"
+    "</div>"
+    "<div class=\"card\">"
+    "<form method=\"POST\" action=\"/upload/closed\" enctype=\"multipart/form-data\">"
+    "<label for=\"wav-closed\">Message quand le commerce est ferme (.wav)</label>"
+    "<input type=\"file\" id=\"wav-closed\" name=\"wav\" accept=\"audio/wav\" required>"
+    "<p class=\"hint\">Format WAV, 2 Mo maximum.</p>"
     "<button type=\"submit\">Envoyer</button>"
     "</form>"
     "</div>"
@@ -119,7 +145,7 @@ const char SUCCESS_HTML[] PROGMEM =
     "<h1>Hucheor</h1>"
     "<div class=\"card\">"
     "<p>Le message audio a bien ete mis a jour.</p>"
-    "<p class=\"hint\"><a href=\"/\">Envoyer un autre fichier</a></p>"
+    "<p class=\"hint\"><a href=\"/\">Retour</a></p>"
     "</div>"
     "</body></html>";
 
@@ -129,6 +155,57 @@ bool requireAuth(AsyncWebServerRequest *request) {
     return false;
   }
   return true;
+}
+
+String formatMinutes(uint16_t minutes) {
+  char buf[6];
+  snprintf(buf, sizeof(buf), "%02d:%02d", minutes / 60, minutes % 60);
+  return String(buf);
+}
+
+uint16_t parseMinutes(const String &hhmm, uint16_t fallback) {
+  int colon = hhmm.indexOf(':');
+  if (colon < 1) return fallback;
+  int hour = hhmm.substring(0, colon).toInt();
+  int minute = hhmm.substring(colon + 1).toInt();
+  if (hour < 0 || hour > 23 || minute < 0 || minute > 59) return fallback;
+  return hour * 60 + minute;
+}
+
+String buildScheduleHtml() {
+  String html;
+  html.reserve(2200);
+  html += "<!doctype html><html lang=\"fr\"><head>"
+          "<meta charset=\"UTF-8\">"
+          "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+          "<title>Hucheor - Horaires</title>" HUCHEOR_STYLE_BLOCK
+          "</head><body>"
+          "<span class=\"eyebrow\">Configuration du boitier</span>"
+          "<h1>Horaires d'ouverture</h1>"
+          "<nav><a href=\"/\">Retour</a></nav>"
+          "<div class=\"card\">"
+          "<form method=\"POST\" action=\"/schedule\">";
+
+  for (int day = 0; day <= 6; day++) {
+    Schedule::DaySchedule s = Schedule::get(day);
+    html += "<div class=\"day-row\">";
+    html += "<label class=\"day-name\" for=\"d" + String(day) + "_en\">";
+    html += WEEKDAY_NAMES[day];
+    html += "</label>";
+    html += "<input type=\"checkbox\" id=\"d" + String(day) + "_en\" name=\"d" + String(day) +
+            "_en\"" + (s.enabled ? " checked" : "") + ">";
+    html += "<input type=\"time\" name=\"d" + String(day) + "_open\" value=\"" +
+            formatMinutes(s.openMinute) + "\">";
+    html += "<input type=\"time\" name=\"d" + String(day) + "_close\" value=\"" +
+            formatMinutes(s.closeMinute) + "\">";
+    html += "</div>";
+  }
+
+  html += "<p class=\"hint\">Cochez les jours ouverts et reglez les horaires. "
+          "Un jour non coche est considere ferme toute la journee.</p>"
+          "<button type=\"submit\">Enregistrer</button>"
+          "</form></div></body></html>";
+  return html;
 }
 
 } // namespace
@@ -162,37 +239,101 @@ void begin() {
     request->send_P(200, "text/html", INDEX_HTML);
   });
 
+  // Auto-synced from the configuring phone's own clock (inline script in
+  // HUCHEOR_STYLE_BLOCK) since this device has no internet access to reach
+  // an NTP server - see schedule.h for why, and the drift this implies.
+  // A plain-text POST body (not multipart/urlencoded) isn't parsed into
+  // request params by ESPAsyncWebServer - read it explicitly via the onBody
+  // handler instead of relying on a "magic" param name that varies by
+  // library version.
   server.on(
-      "/upload", HTTP_POST,
-      [](AsyncWebServerRequest *request) {
+      "/time", HTTP_POST, [](AsyncWebServerRequest *request) {
         if (!requireAuth(request)) return;
-        if (uploadTooLarge) {
-          LittleFS.remove(MESSAGE_PATH); // don't leave a truncated/corrupt WAV as the active message
-          request->send(413, "text/plain",
-                         "Fichier trop volumineux (2 Mo maximum). Rien n'a ete change.");
-          return;
-        }
-        request->send_P(200, "text/html", SUCCESS_HTML);
+        request->send(204);
       },
-      [](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data,
-         size_t len, bool final) {
+      nullptr,
+      [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
         if (!request->authenticate(HTTP_USER, httpPassword)) return;
+        char buf[16] = {0};
+        size_t n = min(len, sizeof(buf) - 1);
+        memcpy(buf, data, n);
+        time_t epoch = atol(buf);
+        if (epoch > 0) Schedule::setCurrentTime(epoch);
+      });
 
-        if (index == 0) {
-          uploadedBytes = 0;
-          uploadTooLarge = false;
-        }
-        uploadedBytes += len;
-        if (uploadedBytes > MAX_UPLOAD_BYTES) {
-          uploadTooLarge = true;
-          return;
-        }
+  server.on("/schedule", HTTP_GET, [](AsyncWebServerRequest *request) {
+    if (!requireAuth(request)) return;
+    request->send(200, "text/html", buildScheduleHtml());
+  });
 
-        File file = index == 0 ? LittleFS.open(MESSAGE_PATH, "w") : LittleFS.open(MESSAGE_PATH, "a");
-        if (file) {
-          file.write(data, len);
-          file.close();
-        }
+  server.on("/schedule", HTTP_POST, [](AsyncWebServerRequest *request) {
+    if (!requireAuth(request)) return;
+    for (int day = 0; day <= 6; day++) {
+      Schedule::DaySchedule s = Schedule::get(day);
+      s.enabled = request->hasParam("d" + String(day) + "_en", true);
+      if (request->hasParam("d" + String(day) + "_open", true)) {
+        s.openMinute = parseMinutes(
+            request->getParam("d" + String(day) + "_open", true)->value(), s.openMinute);
+      }
+      if (request->hasParam("d" + String(day) + "_close", true)) {
+        s.closeMinute = parseMinutes(
+            request->getParam("d" + String(day) + "_close", true)->value(), s.closeMinute);
+      }
+      Schedule::set(day, s);
+    }
+    request->redirect("/schedule");
+  });
+
+  auto handleUploadRequest = [](AsyncWebServerRequest *request, const char *path) {
+    if (!requireAuth(request)) return;
+    if (uploadTooLarge) {
+      LittleFS.remove(path); // don't leave a truncated/corrupt WAV as the active message
+      request->send(413, "text/plain",
+                     "Fichier trop volumineux (2 Mo maximum). Rien n'a ete change.");
+      return;
+    }
+    request->send_P(200, "text/html", SUCCESS_HTML);
+  };
+
+  auto handleUploadBody = [](AsyncWebServerRequest *request, const char *path, size_t index,
+                              uint8_t *data, size_t len) {
+    if (!request->authenticate(HTTP_USER, httpPassword)) return;
+
+    if (index == 0) {
+      uploadedBytes = 0;
+      uploadTooLarge = false;
+    }
+    uploadedBytes += len;
+    if (uploadedBytes > MAX_UPLOAD_BYTES) {
+      uploadTooLarge = true;
+      return;
+    }
+
+    File file = index == 0 ? LittleFS.open(path, "w") : LittleFS.open(path, "a");
+    if (file) {
+      file.write(data, len);
+      file.close();
+    }
+  };
+
+  server.on(
+      "/upload/open", HTTP_POST,
+      [handleUploadRequest](AsyncWebServerRequest *request) {
+        handleUploadRequest(request, MESSAGE_PATH_OPEN);
+      },
+      [handleUploadBody](AsyncWebServerRequest *request, String filename, size_t index,
+                          uint8_t *data, size_t len, bool final) {
+        handleUploadBody(request, MESSAGE_PATH_OPEN, index, data, len);
+      });
+
+  server.on(
+      "/upload/closed", HTTP_POST,
+      [handleUploadRequest](AsyncWebServerRequest *request) {
+        handleUploadRequest(request, MESSAGE_PATH_CLOSED);
+      },
+      [handleUploadBody](AsyncWebServerRequest *request, String filename, size_t index,
+                          uint8_t *data, size_t len, bool final) {
+        handleUploadBody(request, MESSAGE_PATH_CLOSED, index, data, len);
       });
 
   server.begin();
