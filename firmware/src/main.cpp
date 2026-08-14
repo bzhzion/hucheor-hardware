@@ -1,0 +1,80 @@
+// Hucheor beacon firmware skeleton (ESP32 + CC1101 @ 868.3 MHz OOK).
+//
+// This is written from scratch (clean room): it does not reuse any code from
+// balises-ouistici/esp-arduino-nfs32002 (AGPLv3), only the same publicly
+// documented radio parameters of the NF S32-002 standard (868.3 MHz, OOK).
+//
+// Status: radio init + raw edge capture only. The actual NF S32-002 frame
+// matching is NOT implemented yet — it needs real timing data from our own
+// RTL-SDR capture (see project roadmap) before it can be written correctly.
+// Do not guess or borrow timing constants from other projects here.
+
+#include <Arduino.h>
+#include <CC1101_ESP_Arduino.h>
+
+// Wiring: to be confirmed once the first prototype is actually built.
+static const int PIN_SPI_SCK = 18;
+static const int PIN_SPI_MISO = 19;
+static const int PIN_SPI_MOSI = 23;
+static const int PIN_SPI_CS = 5;
+static const int PIN_RADIO_GDO0 = 4; // CC1101 data output, read on edge interrupt
+
+CC1101 radio(PIN_SPI_SCK, PIN_SPI_MISO, PIN_SPI_MOSI, PIN_SPI_CS, PIN_RADIO_GDO0, PIN_RADIO_GDO0);
+
+static const size_t EDGE_BUFFER_SIZE = 800;
+volatile uint32_t edgeIntervalsUs[EDGE_BUFFER_SIZE];
+volatile size_t edgeCount = 0;
+volatile bool bufferReady = false;
+
+// ISR: only record timings, never do Serial/logging or anything blocking here.
+void IRAM_ATTR onRadioEdge() {
+  static uint32_t lastEdgeUs = 0;
+  uint32_t now = micros();
+  uint32_t delta = now - lastEdgeUs;
+  lastEdgeUs = now;
+
+  if (edgeCount < EDGE_BUFFER_SIZE) {
+    edgeIntervalsUs[edgeCount++] = delta;
+  }
+  if (edgeCount >= EDGE_BUFFER_SIZE) {
+    bufferReady = true;
+  }
+}
+
+// TODO(hucheor): implement once we have our own NF S32-002 capture.
+// Must not assume a single hardcoded timing table like Ouistici's prototype —
+// derive the real preamble/bit encoding from our own RTL-SDR recording first.
+bool matchesNfS32002Frame(const volatile uint32_t *intervalsUs, size_t count) {
+  (void)intervalsUs;
+  (void)count;
+  return false;
+}
+
+void setup() {
+  Serial.begin(115200);
+  delay(200);
+
+  radio.init();
+  radio.setMHZ(868.3);
+  radio.setModulation(ASK_OOK);
+  radio.setRx();
+
+  attachInterrupt(digitalPinToInterrupt(PIN_RADIO_GDO0), onRadioEdge, CHANGE);
+
+  Serial.println("Hucheor: listening on 868.3 MHz (no frame decoding yet)");
+}
+
+void loop() {
+  if (bufferReady) {
+    noInterrupts();
+    bool matched = matchesNfS32002Frame(edgeIntervalsUs, edgeCount);
+    edgeCount = 0;
+    bufferReady = false;
+    interrupts();
+
+    if (matched) {
+      Serial.println("Remote detected");
+      // TODO(hucheor): trigger audio playback here (v1 milestone).
+    }
+  }
+}
