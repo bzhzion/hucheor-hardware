@@ -18,6 +18,7 @@ const char *HTTP_USER = "admin";
 // mistaken/hostile one) can consume (secu-audit, 2026-08-14).
 const size_t MAX_UPLOAD_BYTES = 2 * 1024 * 1024;
 size_t uploadedBytes = 0;
+bool uploadTooLarge = false;
 
 char apPassword[13]; // 12 digits + null terminator
 char httpPassword[13];
@@ -58,46 +59,69 @@ void loadOrCreateCredentials() {
 
 // Plain HTML, no external assets (works fully offline on the AP, no logo -
 // not worth the effort on a page this small), large touch targets and real
-// labels. Same brand colors as the public website ("Le Heraut" theme).
-const char INDEX_HTML[] PROGMEM = R"HTML(
-<!doctype html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Hucheor - Configuration</title>
-<style>
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    max-width: 480px; margin: 2rem auto; padding: 0 1.25rem;
-    background: #f3e8d2; color: #241708;
-  }
-  h1 { color: #b1451f; }
-  label { display: block; font-weight: bold; margin-bottom: 0.5rem; }
-  input[type=file] {
-    display: block; width: 100%; margin-bottom: 1.5rem; padding: 0.6rem;
-    border: 1px solid #cbb98f; border-radius: 8px; background: #fff;
-  }
-  button {
-    font-size: 1.1rem; padding: 0.75rem 1.75rem; border-radius: 999px;
-    border: none; background: #b1451f; color: #f3e8d2; cursor: pointer;
-    transition: background 0.2s ease;
-  }
-  button:hover { background: #8a3417; }
-  button:focus-visible { outline: 3px solid #241708; outline-offset: 3px; }
-</style>
-</head>
-<body>
-  <h1>Hucheor</h1>
-  <p>Choisissez le fichier audio (.wav) que le boitier annoncera.</p>
-  <form method="POST" action="/upload" enctype="multipart/form-data">
-    <label for="wav">Fichier audio (.wav)</label>
-    <input type="file" id="wav" name="wav" accept="audio/wav" required>
-    <button type="submit">Envoyer</button>
-  </form>
-</body>
-</html>
-)HTML";
+// labels. Same brand palette/feel as the public website ("Le Heraut" theme:
+// parchment/ink/terracotta), condensed into a single small card since this
+// is the only thing on the page. System font stack instead of the site's
+// custom webfonts (self-hosted on cdn.breizhzion.com, unreachable from an
+// offline WiFi AP with no internet) - keeps it looking native on each phone
+// at zero extra bytes.
+#define HUCHEOR_STYLE_BLOCK \
+  "<style>" \
+  "*{box-sizing:border-box}" \
+  "body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;" \
+  "max-width:440px;margin:2.5rem auto;padding:0 1.25rem;" \
+  "background:#f3e8d2;color:#241708;line-height:1.5}" \
+  ".eyebrow{display:inline-block;background:#241708;color:#e7c77a;" \
+  "font-weight:700;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;" \
+  "padding:.35rem .8rem;border-radius:999px;margin-bottom:1rem}" \
+  "h1{color:#b1451f;margin:0 0 .3rem;font-size:1.9rem}" \
+  ".card{background:#e9d9b6;border-radius:16px;padding:1.75rem;" \
+  "box-shadow:0 12px 24px -16px rgba(36,23,8,.35);margin-top:1.25rem}" \
+  "label{display:block;font-weight:700;margin-bottom:.5rem}" \
+  ".hint{font-size:.85rem;color:#4a3420;margin:.4rem 0 1.4rem}" \
+  "input[type=file]{display:block;width:100%;padding:.6rem;" \
+  "border:1px solid #cbb98f;border-radius:8px;background:#fff;color:#241708}" \
+  "button{font-size:1.05rem;font-weight:700;padding:.8rem 1.75rem;" \
+  "border-radius:999px;border:none;background:#b1451f;color:#f3e8d2;" \
+  "cursor:pointer;margin-top:1.4rem;transition:background .2s ease}" \
+  "button:hover{background:#8a3417}" \
+  "button:focus-visible,input:focus-visible{outline:3px solid #241708;outline-offset:2px}" \
+  "a{color:#8a3417}" \
+  "</style>"
+
+const char INDEX_HTML[] PROGMEM =
+    "<!doctype html><html lang=\"fr\"><head>"
+    "<meta charset=\"UTF-8\">"
+    "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+    "<title>Hucheor - Configuration</title>"
+    HUCHEOR_STYLE_BLOCK
+    "</head><body>"
+    "<span class=\"eyebrow\">Configuration du boitier</span>"
+    "<h1>Hucheor</h1>"
+    "<div class=\"card\">"
+    "<form method=\"POST\" action=\"/upload\" enctype=\"multipart/form-data\">"
+    "<label for=\"wav\">Fichier audio (.wav)</label>"
+    "<input type=\"file\" id=\"wav\" name=\"wav\" accept=\"audio/wav\" required>"
+    "<p class=\"hint\">Le message que le boitier annoncera. Format WAV, 2 Mo maximum.</p>"
+    "<button type=\"submit\">Envoyer</button>"
+    "</form>"
+    "</div>"
+    "</body></html>";
+
+const char SUCCESS_HTML[] PROGMEM =
+    "<!doctype html><html lang=\"fr\"><head>"
+    "<meta charset=\"UTF-8\">"
+    "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+    "<title>Hucheor - Message mis a jour</title>"
+    HUCHEOR_STYLE_BLOCK
+    "</head><body>"
+    "<span class=\"eyebrow\">Configuration du boitier</span>"
+    "<h1>Hucheor</h1>"
+    "<div class=\"card\">"
+    "<p>Le message audio a bien ete mis a jour.</p>"
+    "<p class=\"hint\"><a href=\"/\">Envoyer un autre fichier</a></p>"
+    "</div>"
+    "</body></html>";
 
 bool requireAuth(AsyncWebServerRequest *request) {
   if (!request->authenticate(HTTP_USER, httpPassword)) {
@@ -142,16 +166,25 @@ void begin() {
       "/upload", HTTP_POST,
       [](AsyncWebServerRequest *request) {
         if (!requireAuth(request)) return;
-        request->send(200, "text/plain", "Message audio mis a jour.");
+        if (uploadTooLarge) {
+          LittleFS.remove(MESSAGE_PATH); // don't leave a truncated/corrupt WAV as the active message
+          request->send(413, "text/plain",
+                         "Fichier trop volumineux (2 Mo maximum). Rien n'a ete change.");
+          return;
+        }
+        request->send_P(200, "text/html", SUCCESS_HTML);
       },
       [](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data,
          size_t len, bool final) {
         if (!request->authenticate(HTTP_USER, httpPassword)) return;
 
-        if (index == 0) uploadedBytes = 0;
+        if (index == 0) {
+          uploadedBytes = 0;
+          uploadTooLarge = false;
+        }
         uploadedBytes += len;
         if (uploadedBytes > MAX_UPLOAD_BYTES) {
-          Serial.println("ConfigServer: upload rejected, over size limit");
+          uploadTooLarge = true;
           return;
         }
 
