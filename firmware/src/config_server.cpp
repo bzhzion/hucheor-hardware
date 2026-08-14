@@ -3,8 +3,8 @@
 #include <ESPAsyncWebServer.h>
 #include <LittleFS.h>
 #include <Preferences.h>
-#include <WiFi.h>
 
+#include "network.h"
 #include "schedule.h"
 
 namespace {
@@ -23,8 +23,7 @@ const size_t MAX_UPLOAD_BYTES = 2 * 1024 * 1024;
 size_t uploadedBytes = 0;
 bool uploadTooLarge = false;
 
-char apPassword[13]; // 12 digits + null terminator
-char httpPassword[13];
+char httpPassword[13]; // 12 digits + null terminator
 
 const char *WEEKDAY_NAMES[7] = {"Dimanche", "Lundi", "Mardi", "Mercredi",
                                  "Jeudi",    "Vendredi", "Samedi"};
@@ -33,7 +32,9 @@ const char *WEEKDAY_NAMES[7] = {"Dimanche", "Lundi", "Mardi", "Mercredi",
 // ambiguous characters since it's digits only). Called once ever per
 // device: stored in NVS (Preferences) so it survives reboots and firmware
 // updates, and stays unique per device instead of being shared across every
-// Hucheor beacon.
+// Hucheor beacon. The WiFi AP's own password is generated the same way, but
+// owned by the Network module (see network.cpp) since it's a WiFi concern,
+// not an HTTP one.
 void generateCode(char *out) {
   for (int i = 0; i < 12; i++) {
     out[i] = '0' + (esp_random() % 10);
@@ -41,17 +42,8 @@ void generateCode(char *out) {
   out[12] = '\0';
 }
 
-void loadOrCreateCredentials() {
+void loadOrCreateHttpPassword() {
   prefs.begin("hucheor", false);
-
-  String wifiPass = prefs.getString("wifi_pass", "");
-  if (wifiPass.length() == 0) {
-    generateCode(apPassword);
-    prefs.putString("wifi_pass", apPassword);
-  } else {
-    wifiPass.toCharArray(apPassword, sizeof(apPassword));
-  }
-
   String httpPass = prefs.getString("http_pass", "");
   if (httpPass.length() == 0) {
     generateCode(httpPassword);
@@ -59,7 +51,6 @@ void loadOrCreateCredentials() {
   } else {
     httpPass.toCharArray(httpPassword, sizeof(httpPassword));
   }
-
   prefs.end();
 }
 
@@ -102,8 +93,16 @@ void loadOrCreateCredentials() {
   ".day-row input[type=time]{width:auto;flex:1}" \
   "</style>" \
   "<script>" \
+  /* Sends the phone's LOCAL wall-clock time (already DST-adjusted by the */ \
+  /* phone's own, regularly-updated OS timezone database), encoded as if */ \
+  /* it were UTC - matching what Schedule::setCurrentTime() expects. Using */ \
+  /* Date.now()/1000 directly would send true UTC instead, which the */ \
+  /* firmware never converts back to local time (see schedule.h). */ \
+  "var d=new Date();" \
+  "var localAsUtc=Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()," \
+  "d.getHours(),d.getMinutes(),d.getSeconds())/1000;" \
   "fetch('/time',{method:'POST',headers:{'Content-Type':'text/plain'}," \
-  "body:String(Math.floor(Date.now()/1000))}).catch(function(){});" \
+  "body:String(Math.floor(localAsUtc))}).catch(function(){});" \
   "</script>"
 
 const char INDEX_HTML[] PROGMEM =
@@ -115,7 +114,7 @@ const char INDEX_HTML[] PROGMEM =
     "</head><body>"
     "<span class=\"eyebrow\">Configuration du boitier</span>"
     "<h1>Hucheor</h1>"
-    "<nav><a href=\"/schedule\">Horaires d'ouverture</a></nav>"
+    "<nav><a href=\"/schedule\">Horaires d'ouverture</a> &middot; <a href=\"/wifi\">Reseau</a></nav>"
     "<div class=\"card\">"
     "<form method=\"POST\" action=\"/upload/open\" enctype=\"multipart/form-data\">"
     "<label for=\"wav-open\">Message quand le commerce est ouvert (.wav)</label>"
@@ -256,25 +255,16 @@ String buildScheduleHtml(int currentModel) {
 namespace ConfigServer {
 
 void begin() {
-  // Bring the radio subsystem up *before* generating the random security
-  // codes below: esp_random()'s entropy quality depends on RF activity
-  // (Espressif's own guidance), so generating credentials first thing at
-  // boot - before any radio has ever been enabled - could be weaker than
-  // intended on a device's very first run (secu-audit, 2026-08-14).
-  WiFi.mode(WIFI_AP);
+  // Network::begin() (called before this, from main.cpp) has already
+  // brought up either the standalone AP or the shop's own WiFi network by
+  // the time this runs - this module only needs its own HTTP Basic Auth
+  // password, a separate concern from whichever WiFi credentials apply.
+  loadOrCreateHttpPassword();
 
-  loadOrCreateCredentials();
-
-  char apName[32];
-  uint8_t mac[6];
-  WiFi.macAddress(mac);
-  snprintf(apName, sizeof(apName), "Hucheor-%02X%02X", mac[4], mac[5]);
-  WiFi.softAP(apName, apPassword);
-
-  // TODO(hucheor): once the enclosure exists, print apName/apPassword/
-  // HTTP_USER+httpPassword on a label inside the device instead of Serial -
-  // physical possession of the box is the actual trust boundary here.
-  Serial.printf("Hucheor WiFi AP: %s / password: %s\n", apName, apPassword);
+  // TODO(hucheor): once the enclosure exists, print the WiFi AP password
+  // (Network::apPassword(), standalone mode only) and this HTTP password on
+  // a label inside the device instead of Serial - physical possession of
+  // the box is the actual trust boundary here.
   Serial.printf("Hucheor config login: %s / password: %s\n", HTTP_USER, httpPassword);
 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -351,6 +341,50 @@ void begin() {
       Schedule::setRange(i, r);
     }
     request->redirect("/schedule");
+  });
+
+  server.on("/wifi", HTTP_GET, [](AsyncWebServerRequest *request) {
+    if (!requireAuth(request)) return;
+    String html;
+    html.reserve(1400);
+    html += "<!doctype html><html lang=\"fr\"><head>"
+            "<meta charset=\"UTF-8\">"
+            "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+            "<title>Hucheor - Reseau</title>" HUCHEOR_STYLE_BLOCK
+            "</head><body>"
+            "<span class=\"eyebrow\">Configuration du boitier</span>"
+            "<h1>Reseau</h1>"
+            "<nav><a href=\"/\">Retour</a></nav>"
+            "<div class=\"card\"><p>";
+    if (Network::isStation()) {
+      html += "Le boitier est connecte au reseau WiFi <strong>" + Network::stationSsid() +
+              "</strong>. Il est aussi joignable sur ce reseau via <strong>" +
+              Network::hostname() + ".local</strong>, et l'heure se synchronise "
+              "automatiquement par Internet (NTP).";
+    } else {
+      html += "Le boitier fonctionne en point d'acces autonome (<strong>" + Network::hostname() +
+              "</strong>), sans connexion Internet.";
+    }
+    html += "</p>"
+            "<form method=\"POST\" action=\"/wifi\">"
+            "<label for=\"ssid\">Rejoindre le WiFi du commerce (optionnel)</label>"
+            "<input type=\"text\" id=\"ssid\" name=\"ssid\" maxlength=\"32\" "
+            "placeholder=\"Nom du reseau WiFi\" value=\"" + Network::stationSsid() + "\">"
+            "<label for=\"pass\" style=\"margin-top:1rem\">Mot de passe</label>"
+            "<input type=\"password\" id=\"pass\" name=\"pass\" maxlength=\"63\">"
+            "<p class=\"hint\">Laissez le nom de reseau vide et enregistrez pour revenir au "
+            "point d'acces autonome. Le boitier redemarre pour appliquer le changement.</p>"
+            "<button type=\"submit\">Enregistrer et redemarrer</button>"
+            "</form></div></body></html>";
+    request->send(200, "text/html", html);
+  });
+
+  server.on("/wifi", HTTP_POST, [](AsyncWebServerRequest *request) {
+    if (!requireAuth(request)) return;
+    String ssid = request->hasParam("ssid", true) ? request->getParam("ssid", true)->value() : "";
+    String pass = request->hasParam("pass", true) ? request->getParam("pass", true)->value() : "";
+    request->send(200, "text/plain", "Redemarrage en cours...");
+    Network::configureStation(ssid, pass); // restarts the device, does not return
   });
 
   auto handleUploadRequest = [](AsyncWebServerRequest *request, const char *path) {

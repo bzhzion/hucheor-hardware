@@ -82,16 +82,18 @@ bool evenParity(const uint8_t *frame, int start, int count) {
 }
 
 // Decodes a full 59-bit DCF77 minute frame. Returns true and fills
-// *utcEpoch on success (parity + sanity checks passed), false otherwise -
+// *localEpoch on success (parity + sanity checks passed), false otherwise -
 // a single garbled minute is simply skipped, the next one is tried a
 // minute later.
-bool decodeFrame(const uint8_t *frame, time_t *utcEpoch) {
+bool decodeFrame(const uint8_t *frame, time_t *localEpoch) {
   if (frame[0] != 0) return false;  // bit 0: always 0 (minute start marker)
   if (frame[20] != 1) return false; // bit 20: always 1 (start-of-time marker)
 
-  bool cest = frame[17] == 1; // Z1: CEST (UTC+2) in effect
-  bool cet = frame[18] == 1;  // Z2: CET (UTC+1) in effect
-  if (cest == cet) return false; // exactly one of the two must be set
+  bool cest = frame[17] == 1; // Z1: CEST in effect
+  bool cet = frame[18] == 1;  // Z2: CET in effect
+  if (cest == cet) return false; // exactly one of the two must be set (unused here,
+                                  // kept as a sanity/parity-adjacent check: a valid
+                                  // telegram always has exactly one of them set)
 
   if (!evenParity(frame, 21, 8)) return false;  // minute + its parity bit
   if (!evenParity(frame, 29, 7)) return false;  // hour + its parity bit
@@ -113,11 +115,12 @@ bool decodeFrame(const uint8_t *frame, time_t *utcEpoch) {
   t.tm_min = minute;
   t.tm_sec = 0;
 
-  // DCF77 transmits French/German local time (CET or CEST), not UTC.
-  // timegm() treats the fields as if they were already UTC, so subtract
-  // the announced offset to recover the true UTC instant.
-  time_t asIfUtc = timegmCompat(&t);
-  *utcEpoch = asIfUtc - (cest ? 2 : 1) * 3600;
+  // DCF77 already transmits French local wall-clock time (CET or CEST,
+  // whichever currently applies - the Z1/Z2 flags above are what tell us
+  // *which*, we don't need to convert anything). Schedule::setCurrentTime()
+  // wants exactly this: local time encoded as if it were UTC. See
+  // schedule.h for why this module never converts to true UTC.
+  *localEpoch = timegmCompat(&t);
   return true;
 }
 
@@ -140,12 +143,12 @@ bool poll() {
   frameComplete = false;
   interrupts();
 
-  time_t utcEpoch;
-  if (decodeFrame(snapshot, &utcEpoch)) {
+  time_t localEpoch;
+  if (decodeFrame(snapshot, &localEpoch)) {
     // The frame describes the minute that just finished, and the correct
     // instant right now is the start of the *next* minute (the frame for
     // minute N is fully received right as minute N+1 begins).
-    Schedule::setCurrentTime(utcEpoch + 60);
+    Schedule::setCurrentTime(localEpoch + 60);
     return true;
   }
   return false;

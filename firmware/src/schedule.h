@@ -7,19 +7,26 @@
 // ISO week of the year (1-53) to one of them. Falls back to model 0 if a
 // week has no explicit assignment.
 //
-// Time source: this firmware does not assume internet access (the device's
-// only WiFi role so far is its own config access point, see
-// config_server.h). Two ways to get real time, both optional and
-// independent of each other:
+// Time sources, all optional and independent of each other - see network.h
+// and dcf77_clock.h:
 // - The shopkeeper's phone clock, auto-synced whenever they open the config
 //   page (see ConfigServer's inline script + setCurrentTime()).
 // - A DCF77 longwave radio receiver module (see dcf77_clock.h), which syncs
-//   automatically and continuously without any phone/WiFi involvement -
-//   preferred once wired, since it can't go stale between shopkeeper visits.
-// Without either, the ESP32's internal clock drifts freely from whatever it
-// was last set to (or 1970-01-01 if never set) - acceptable degraded mode
-// for a v1 MVP, not a silent wrong-answer: DaySchedule::enabled defaults to
-// false, so an un-synced clock reads as "closed" rather than guessing.
+//   automatically and continuously without any phone/WiFi involvement.
+// - NTP, when the device joins the shop's own WiFi network instead of
+//   running its own access point (see network.h) and therefore has
+//   internet access.
+// Without any of them, the ESP32's internal clock drifts freely from
+// whatever it was last set to (or 1970-01-01 if never set) - acceptable
+// degraded mode for a v1 MVP, not a silent wrong-answer: DaySchedule::
+// enabled defaults to false, so an un-synced clock reads as "closed" rather
+// than guessing.
+//
+// DST note: this module deliberately never computes CEST/CET itself (see
+// currentIsoWeek() in schedule.cpp) - every time source is responsible for
+// resolving daylight saving on its own, using setCurrentTime() to hand over
+// already-correct French local wall-clock time. This sidesteps having to
+// keep a hardcoded EU DST rule up to date in firmware.
 
 namespace Schedule {
 

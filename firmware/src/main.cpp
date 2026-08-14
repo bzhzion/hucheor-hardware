@@ -15,6 +15,7 @@
 #include "audio_player.h"
 #include "config_server.h"
 #include "dcf77_clock.h"
+#include "network.h"
 #include "schedule.h"
 
 // Wiring: to be confirmed once the first prototype is actually built.
@@ -65,14 +66,14 @@ void setup() {
   Serial.begin(115200);
   delay(200);
 
-  // Both time sources (DCF77 below, and the phone-clock sync in
-  // ConfigServer) feed a true UTC epoch into the system clock. Setting the
-  // timezone once here is what makes Schedule's localtime_r() calls return
-  // correct French wall-clock time (with automatic CET/CEST switching)
-  // instead of raw UTC - without this, opening hours would be off by 1-2
-  // hours depending on the season.
-  setenv("TZ", "CET-1CEST,M3.5.0,M10.5.0/3", 1);
-  tzset();
+  // Deliberately no setenv("TZ", ...) here: every time source (DCF77,
+  // phone-clock sync, NTP once Network is in station mode) hands
+  // Schedule::setCurrentTime() already-correct French local wall-clock
+  // time, encoded as if it were UTC. Schedule reads it back with gmtime_r(),
+  // never localtime_r() - no CEST/CET rule is hardcoded in this firmware.
+  // See schedule.h for the full reasoning (a hardcoded EU DST rule would go
+  // silently wrong if that legislation ever changes without a matching
+  // firmware update).
 
   radio.init();
   radio.setMHZ(868.3);
@@ -86,6 +87,7 @@ void setup() {
   }
 
   Schedule::begin();
+  Network::begin(); // decides standalone AP vs joining the shop's WiFi, see network.h
   ConfigServer::begin();
   Dcf77Clock::begin(PIN_DCF77);
 

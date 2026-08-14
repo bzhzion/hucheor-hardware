@@ -17,13 +17,25 @@ String rangeKey(int index, const char *field) {
   return String("r") + index + "_" + field;
 }
 
-// ISO 8601 week number (1-53) for the device's current local time. newlib's
-// strftime supports %V on ESP32 (part of the standard C library, not
-// something we implement ourselves).
+// ISO 8601 week number (1-53) for the device's current local time.
+//
+// Deliberately gmtime_r(), not localtime_r(): this module never asks the C
+// library to do any timezone/DST math itself. setCurrentTime() is always
+// given the *French local wall-clock time*, just encoded as if it were UTC
+// (both DCF77 and the phone-clock sync produce that format - see their own
+// comments for why). Reading it back with gmtime_r() hands the same fields
+// straight back out, with zero DST logic anywhere in this firmware to keep
+// in sync with EU legislation - each time source is independently
+// responsible for knowing whether CEST or CET currently applies (DCF77
+// broadcasts it live, the phone's OS has its own kept-up-to-date timezone
+// database). If this ever used localtime_r() with a hardcoded TZ string
+// instead, a future change to the EU's DST rules (there have been
+// discussions of abolishing the switch entirely) would silently produce
+// wrong opening hours until the firmware itself was updated and reflashed.
 int currentIsoWeek() {
   time_t now = time(nullptr);
   struct tm localNow;
-  localtime_r(&now, &localNow);
+  gmtime_r(&now, &localNow);
   char buf[4];
   strftime(buf, sizeof(buf), "%V", &localNow);
   return atoi(buf);
@@ -113,7 +125,7 @@ int modelForWeek(int isoWeek) {
 bool isOpenNow() {
   time_t now = time(nullptr);
   struct tm localNow;
-  localtime_r(&now, &localNow);
+  gmtime_r(&now, &localNow);
 
   int model = modelForWeek(currentIsoWeek());
   DaySchedule today = get(model, localNow.tm_wday);
@@ -128,6 +140,10 @@ bool isOpenNow() {
 }
 
 void setCurrentTime(time_t epochSeconds) {
+  // epochSeconds must already be French local wall-clock time, encoded as
+  // if it were UTC (i.e. what you'd get from timegm() on the local
+  // year/month/day/hour/minute fields) - see the comment on currentIsoWeek()
+  // for why this module works this way instead of applying a timezone.
   struct timeval tv = {.tv_sec = epochSeconds, .tv_usec = 0};
   settimeofday(&tv, nullptr);
 }
