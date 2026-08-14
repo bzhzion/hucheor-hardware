@@ -14,6 +14,7 @@
 
 #include "audio_player.h"
 #include "config_server.h"
+#include "dcf77_clock.h"
 #include "schedule.h"
 
 // Wiring: to be confirmed once the first prototype is actually built.
@@ -26,6 +27,8 @@ static const int PIN_RADIO_GDO0 = 4; // CC1101 data output, read on edge interru
 static const int PIN_I2S_BCK = 26;
 static const int PIN_I2S_WS = 25;
 static const int PIN_I2S_DATA = 27;
+
+static const int PIN_DCF77 = 32; // optional: DCF77 receiver module output
 
 CC1101 radio(PIN_SPI_SCK, PIN_SPI_MISO, PIN_SPI_MOSI, PIN_SPI_CS, PIN_RADIO_GDO0, PIN_RADIO_GDO0);
 
@@ -62,6 +65,15 @@ void setup() {
   Serial.begin(115200);
   delay(200);
 
+  // Both time sources (DCF77 below, and the phone-clock sync in
+  // ConfigServer) feed a true UTC epoch into the system clock. Setting the
+  // timezone once here is what makes Schedule's localtime_r() calls return
+  // correct French wall-clock time (with automatic CET/CEST switching)
+  // instead of raw UTC - without this, opening hours would be off by 1-2
+  // hours depending on the season.
+  setenv("TZ", "CET-1CEST,M3.5.0,M10.5.0/3", 1);
+  tzset();
+
   radio.init();
   radio.setMHZ(868.3);
   radio.setModulation(ASK_OOK);
@@ -75,11 +87,16 @@ void setup() {
 
   Schedule::begin();
   ConfigServer::begin();
+  Dcf77Clock::begin(PIN_DCF77);
 
   Serial.println("Hucheor: listening on 868.3 MHz (no frame decoding yet)");
 }
 
 void loop() {
+  if (Dcf77Clock::poll()) {
+    Serial.println("Hucheor: clock synced from DCF77");
+  }
+
   if (bufferReady) {
     noInterrupts();
     bool matched = matchesNfS32002Frame(edgeIntervalsUs, edgeCount);

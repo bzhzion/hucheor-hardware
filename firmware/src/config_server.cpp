@@ -172,9 +172,11 @@ uint16_t parseMinutes(const String &hhmm, uint16_t fallback) {
   return hour * 60 + minute;
 }
 
-String buildScheduleHtml() {
+String buildScheduleHtml(int currentModel) {
+  if (currentModel < 0 || currentModel >= Schedule::MAX_MODELS) currentModel = 0;
+
   String html;
-  html.reserve(2200);
+  html.reserve(4000);
   html += "<!doctype html><html lang=\"fr\"><head>"
           "<meta charset=\"UTF-8\">"
           "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
@@ -182,12 +184,27 @@ String buildScheduleHtml() {
           "</head><body>"
           "<span class=\"eyebrow\">Configuration du boitier</span>"
           "<h1>Horaires d'ouverture</h1>"
-          "<nav><a href=\"/\">Retour</a></nav>"
-          "<div class=\"card\">"
-          "<form method=\"POST\" action=\"/schedule\">";
+          "<nav><a href=\"/\">Retour</a></nav>";
+
+  // Model switcher: each model is a full week schedule (e.g. "Standard",
+  // "Ete", "Vacances de Noel"). Which one applies to which week of the year
+  // is decided further down, in the week-ranges table.
+  html += "<div class=\"card\"><label>Modele en cours d'edition</label><nav>";
+  for (int m = 0; m < Schedule::MAX_MODELS; m++) {
+    html += "<a href=\"/schedule?model=" + String(m) + "\"" +
+            (m == currentModel ? " style=\"font-weight:700\"" : "") + ">" + Schedule::modelName(m) +
+            "</a> ";
+  }
+  html += "</nav>";
+
+  html += "<form method=\"POST\" action=\"/schedule\">"
+          "<input type=\"hidden\" name=\"model\" value=\"" + String(currentModel) + "\">"
+          "<label for=\"mname\">Nom de ce modele</label>"
+          "<input type=\"text\" id=\"mname\" name=\"mname\" maxlength=\"24\" value=\"" +
+          Schedule::modelName(currentModel) + "\" style=\"margin-bottom:1.2rem\">";
 
   for (int day = 0; day <= 6; day++) {
-    Schedule::DaySchedule s = Schedule::get(day);
+    Schedule::DaySchedule s = Schedule::get(currentModel, day);
     html += "<div class=\"day-row\">";
     html += "<label class=\"day-name\" for=\"d" + String(day) + "_en\">";
     html += WEEKDAY_NAMES[day];
@@ -201,10 +218,36 @@ String buildScheduleHtml() {
     html += "</div>";
   }
 
-  html += "<p class=\"hint\">Cochez les jours ouverts et reglez les horaires. "
+  html += "<p class=\"hint\">Cochez les jours ouverts et reglez les horaires de ce modele. "
           "Un jour non coche est considere ferme toute la journee.</p>"
-          "<button type=\"submit\">Enregistrer</button>"
-          "</form></div></body></html>";
+          "<button type=\"submit\">Enregistrer ce modele</button>"
+          "</form></div>";
+
+  // Week ranges: which model applies to which weeks of the year (ISO week
+  // numbers, 1-53). A week with no matching range falls back to the first
+  // model ("Standard").
+  html += "<div class=\"card\"><form method=\"POST\" action=\"/schedule/ranges\">"
+          "<label>Semaines de l'annee (1 a 53)</label>"
+          "<p class=\"hint\">Exemple : de la semaine 1 a 26, modele Standard ; "
+          "de la semaine 27 a 35, modele Ete.</p>";
+  for (int i = 0; i < Schedule::MAX_RANGES; i++) {
+    Schedule::WeekRange r = Schedule::getRange(i);
+    html += "<div class=\"day-row\">";
+    html += "<input type=\"number\" min=\"0\" max=\"53\" name=\"r" + String(i) + "_start\" "
+            "value=\"" + String(r.startWeek) + "\" placeholder=\"debut\" style=\"width:4.5rem\">";
+    html += "<input type=\"number\" min=\"0\" max=\"53\" name=\"r" + String(i) + "_end\" "
+            "value=\"" + String(r.endWeek) + "\" placeholder=\"fin\" style=\"width:4.5rem\">";
+    html += "<select name=\"r" + String(i) + "_model\">";
+    for (int m = 0; m < Schedule::MAX_MODELS; m++) {
+      html += "<option value=\"" + String(m) + "\"" + (r.model == m ? " selected" : "") + ">" +
+              Schedule::modelName(m) + "</option>";
+    }
+    html += "</select></div>";
+  }
+  html += "<p class=\"hint\">Laissez debut a 0 pour desactiver une ligne.</p>"
+          "<button type=\"submit\">Enregistrer les semaines</button>"
+          "</form></div>"
+          "</body></html>";
   return html;
 }
 
@@ -263,13 +306,21 @@ void begin() {
 
   server.on("/schedule", HTTP_GET, [](AsyncWebServerRequest *request) {
     if (!requireAuth(request)) return;
-    request->send(200, "text/html", buildScheduleHtml());
+    int model = request->hasParam("model") ? request->getParam("model")->value().toInt() : 0;
+    request->send(200, "text/html", buildScheduleHtml(model));
   });
 
   server.on("/schedule", HTTP_POST, [](AsyncWebServerRequest *request) {
     if (!requireAuth(request)) return;
+    int model = request->hasParam("model", true) ? request->getParam("model", true)->value().toInt() : 0;
+    if (model < 0 || model >= Schedule::MAX_MODELS) model = 0;
+
+    if (request->hasParam("mname", true)) {
+      Schedule::setModelName(model, request->getParam("mname", true)->value());
+    }
+
     for (int day = 0; day <= 6; day++) {
-      Schedule::DaySchedule s = Schedule::get(day);
+      Schedule::DaySchedule s = Schedule::get(model, day);
       s.enabled = request->hasParam("d" + String(day) + "_en", true);
       if (request->hasParam("d" + String(day) + "_open", true)) {
         s.openMinute = parseMinutes(
@@ -279,7 +330,25 @@ void begin() {
         s.closeMinute = parseMinutes(
             request->getParam("d" + String(day) + "_close", true)->value(), s.closeMinute);
       }
-      Schedule::set(day, s);
+      Schedule::set(model, day, s);
+    }
+    request->redirect(("/schedule?model=" + String(model)).c_str());
+  });
+
+  server.on("/schedule/ranges", HTTP_POST, [](AsyncWebServerRequest *request) {
+    if (!requireAuth(request)) return;
+    for (int i = 0; i < Schedule::MAX_RANGES; i++) {
+      Schedule::WeekRange r;
+      if (request->hasParam("r" + String(i) + "_start", true)) {
+        r.startWeek = request->getParam("r" + String(i) + "_start", true)->value().toInt();
+      }
+      if (request->hasParam("r" + String(i) + "_end", true)) {
+        r.endWeek = request->getParam("r" + String(i) + "_end", true)->value().toInt();
+      }
+      if (request->hasParam("r" + String(i) + "_model", true)) {
+        r.model = request->getParam("r" + String(i) + "_model", true)->value().toInt();
+      }
+      Schedule::setRange(i, r);
     }
     request->redirect("/schedule");
   });
