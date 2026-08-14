@@ -19,9 +19,12 @@ jobs:
       # actions/setup-python failed twice in a row trying to fetch a build for
       # this runner's OS ("Version 3.12 ... was not found for Debian 13") -
       # the runner image already has a system python3, use that directly
-      # instead of depending on GitHub's version-manifest lookup.
+      # instead of depending on GitHub's version-manifest lookup. Debian 13's
+      # system python3 is PEP 668 "externally managed", hence
+      # --break-system-packages (this runner is dedicated CI, not a shared
+      # workstation, so polluting its system python3 with platformio is fine).
       - name: Install PlatformIO
-        run: pip3 install --user platformio
+        run: pip3 install --user --break-system-packages platformio
 
       - name: Add PlatformIO to PATH
         run: echo "$HOME/.local/bin" >> "$GITHUB_PATH"
