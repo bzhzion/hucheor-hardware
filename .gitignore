@@ -1,0 +1,11 @@
+# PlatformIO build artifacts
+firmware/.pio/
+.pio-venv/
+
+# KiCad / EDA backups
+*.bak
+*-backups/
+
+# OS cruft
+.DS_Store
+Thumbs.db
