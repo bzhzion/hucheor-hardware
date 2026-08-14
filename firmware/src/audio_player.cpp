@@ -17,12 +17,20 @@ struct WavFormat {
   uint32_t dataSize = 0;
 };
 
+// seek() wrapper that treats "can't move to that offset" as a hard parse
+// failure instead of silently leaving the file position unchanged - without
+// this, a malformed/hostile WAV file can make the loop below re-read the
+// same chunk forever (found in secu-audit, 2026-08-14).
+bool seekOrFail(File &file, uint32_t offset) {
+  return file.seek(offset);
+}
+
 bool readWavHeader(File &file, WavFormat &format) {
   char riffId[4];
   file.readBytes(riffId, 4);
   if (memcmp(riffId, "RIFF", 4) != 0) return false;
 
-  file.seek(file.position() + 4); // overall file size, unused
+  if (!seekOrFail(file, file.position() + 4)) return false; // overall file size, unused
   char waveId[4];
   file.readBytes(waveId, 4);
   if (memcmp(waveId, "WAVE", 4) != 0) return false;
@@ -34,18 +42,23 @@ bool readWavHeader(File &file, WavFormat &format) {
     file.readBytes(reinterpret_cast<char *>(&chunkSize), 4);
 
     if (memcmp(chunkId, "fmt ", 4) == 0) {
+      // A "fmt " chunk shorter than 16 bytes can't hold the fields we read
+      // below - reject it instead of letting chunkSize - 16 underflow
+      // (unsigned arithmetic) into a huge seek offset (secu-audit finding).
+      if (chunkSize < 16) return false;
+
       uint16_t audioFormat = 0;
       file.readBytes(reinterpret_cast<char *>(&audioFormat), 2);
       file.readBytes(reinterpret_cast<char *>(&format.numChannels), 2);
       file.readBytes(reinterpret_cast<char *>(&format.sampleRate), 4);
-      file.seek(file.position() + 6); // byteRate + blockAlign, unused
+      if (!seekOrFail(file, file.position() + 6)) return false; // byteRate + blockAlign, unused
       file.readBytes(reinterpret_cast<char *>(&format.bitsPerSample), 2);
-      file.seek(file.position() + (chunkSize - 16));
+      if (chunkSize > 16 && !seekOrFail(file, file.position() + (chunkSize - 16))) return false;
     } else if (memcmp(chunkId, "data", 4) == 0) {
       format.dataSize = chunkSize;
       return format.numChannels > 0 && format.sampleRate > 0 && format.bitsPerSample == 16;
     } else {
-      file.seek(file.position() + chunkSize);
+      if (!seekOrFail(file, file.position() + chunkSize)) return false;
     }
   }
   return false;
