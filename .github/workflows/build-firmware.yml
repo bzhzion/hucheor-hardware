@@ -16,13 +16,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
+      # actions/setup-python failed twice in a row trying to fetch a build for
+      # this runner's OS ("Version 3.12 ... was not found for Debian 13") -
+      # the runner image already has a system python3, use that directly
+      # instead of depending on GitHub's version-manifest lookup.
       - name: Install PlatformIO
-        run: pip install platformio
+        run: pip3 install --user platformio
+
+      - name: Add PlatformIO to PATH
+        run: echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       - name: Build
         working-directory: firmware
