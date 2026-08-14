@@ -41,6 +41,18 @@ int currentIsoWeek() {
   return atoi(buf);
 }
 
+// Right after a cold boot or a power-loss restart, and before any time
+// source (DCF77, phone-clock sync, NTP) has synced, the system clock reads
+// close to epoch 0 (1970-01-01, a Thursday) - not zero, not obviously wrong
+// to a naive check. If that weekday happens to be enabled in the active
+// model, isOpenNow() would confidently announce an arbitrary open/closed
+// status instead of failing safe. Same threshold as network.cpp's
+// SANE_EPOCH_THRESHOLD (kept separate on purpose: this module must not
+// depend on Network to know whether its own clock looks plausible).
+const time_t SANE_EPOCH_THRESHOLD = 8L * 365 * 24 * 3600;
+
+bool clockLooksSane() { return time(nullptr) > SANE_EPOCH_THRESHOLD; }
+
 } // namespace
 
 namespace Schedule {
@@ -123,6 +135,11 @@ int modelForWeek(int isoWeek) {
 }
 
 bool isOpenNow() {
+  // Fail safe rather than guess on a garbage post-boot clock (see
+  // clockLooksSane() above) - "closed" is the safer wrong answer for a
+  // blind/low-vision visitor than confidently announcing "open".
+  if (!clockLooksSane()) return false;
+
   time_t now = time(nullptr);
   struct tm localNow;
   gmtime_r(&now, &localNow);

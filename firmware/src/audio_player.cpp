@@ -116,18 +116,30 @@ bool playWavFile(const char *path) {
 
   uint8_t buffer[512];
   size_t remaining = format.dataSize;
+  bool ok = true;
   while (remaining > 0 && file.available()) {
     size_t toRead = min(sizeof(buffer), remaining);
     size_t bytesRead = file.readBytes(reinterpret_cast<char *>(buffer), toRead);
     if (bytesRead == 0) break;
 
+    // Bounded wait, not portMAX_DELAY: if the I2S peripheral never drains
+    // its DMA buffer (disconnected/faulty MAX98357A, driver fault), this
+    // must not be able to hang the firmware forever - found in a full
+    // blocking-call audit, 2026-08-14, alongside the network resilience
+    // work. 2s per 512-byte chunk is already a huge margin (a real device
+    // drains that in a few milliseconds at any sane sample rate).
     size_t bytesWritten = 0;
-    i2s_write(I2S_PORT, buffer, bytesRead, &bytesWritten, portMAX_DELAY);
+    esp_err_t err = i2s_write(I2S_PORT, buffer, bytesRead, &bytesWritten, pdMS_TO_TICKS(2000));
+    if (err != ESP_OK || bytesWritten == 0) {
+      Serial.println("AudioPlayer: I2S write stalled, aborting playback");
+      ok = false;
+      break;
+    }
     remaining -= bytesRead;
   }
 
   file.close();
-  return true;
+  return ok;
 }
 
 } // namespace AudioPlayer
