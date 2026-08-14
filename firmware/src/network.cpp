@@ -67,7 +67,11 @@ time_t timegmCompat(const struct tm *t) {
 // some future gmtime_r()/localtime_r() call elsewhere and reintroduce the
 // exact hardcoded-DST-rule problem this design otherwise avoids).
 void syncTimeFromNtp() {
-  configTime(0, 0, "fr.pool.ntp.org", "pool.ntp.org");
+  prefs.begin(NAMESPACE, true);
+  String server = prefs.getString("ntp_server", "fr.pool.ntp.org");
+  prefs.end();
+
+  configTime(0, 0, server.c_str(), "pool.ntp.org"); // 2nd arg: fallback if the first is unreachable
 
   time_t now = 0;
   for (int attempt = 0; attempt < 20; attempt++) {
@@ -151,10 +155,18 @@ String stationSsid() {
   return ssid;
 }
 
-void configureStation(const String &ssid, const String &password) {
+String ntpServer() {
+  prefs.begin(NAMESPACE, true);
+  String server = prefs.getString("ntp_server", "fr.pool.ntp.org");
+  prefs.end();
+  return server;
+}
+
+void configureStation(const String &ssid, const String &password, const String &ntpServer) {
   prefs.begin(NAMESPACE, false);
   prefs.putString("sta_ssid", ssid);
   prefs.putString("sta_pass", password);
+  if (ntpServer.length() > 0) prefs.putString("ntp_server", ntpServer);
   prefs.end();
   delay(500); // let ESPAsyncWebServer flush its HTTP response before the reset cuts everything off
   ESP.restart();

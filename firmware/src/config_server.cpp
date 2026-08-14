@@ -372,8 +372,12 @@ void begin() {
             "placeholder=\"Nom du reseau WiFi\" value=\"" + Network::stationSsid() + "\">"
             "<label for=\"pass\" style=\"margin-top:1rem\">Mot de passe</label>"
             "<input type=\"password\" id=\"pass\" name=\"pass\" maxlength=\"63\">"
+            "<label for=\"ntp\" style=\"margin-top:1rem\">Serveur NTP (heure par Internet)</label>"
+            "<input type=\"text\" id=\"ntp\" name=\"ntp\" maxlength=\"63\" "
+            "value=\"" + Network::ntpServer() + "\">"
             "<p class=\"hint\">Laissez le nom de reseau vide et enregistrez pour revenir au "
-            "point d'acces autonome. Le boitier redemarre pour appliquer le changement.</p>"
+            "point d'acces autonome. Le serveur NTP n'est utilise que si le boitier rejoint un "
+            "reseau WiFi. Le boitier redemarre pour appliquer le changement.</p>"
             "<button type=\"submit\">Enregistrer et redemarrer</button>"
             "</form></div></body></html>";
     request->send(200, "text/html", html);
@@ -383,8 +387,9 @@ void begin() {
     if (!requireAuth(request)) return;
     String ssid = request->hasParam("ssid", true) ? request->getParam("ssid", true)->value() : "";
     String pass = request->hasParam("pass", true) ? request->getParam("pass", true)->value() : "";
+    String ntp = request->hasParam("ntp", true) ? request->getParam("ntp", true)->value() : "";
     request->send(200, "text/plain", "Redemarrage en cours...");
-    Network::configureStation(ssid, pass); // restarts the device, does not return
+    Network::configureStation(ssid, pass, ntp); // restarts the device, does not return
   });
 
   auto handleUploadRequest = [](AsyncWebServerRequest *request, const char *path) {

@@ -35,9 +35,13 @@ String apPassword();
 
 String stationSsid();
 
-// Stores new station credentials and restarts the device to apply them
-// (simplest reliable way to cleanly retry Network::begin() with the new
-// settings, rather than tearing down and reconfiguring WiFi live).
-void configureStation(const String &ssid, const String &password);
+// Defaults to "fr.pool.ntp.org" if never set. Only used in station mode.
+String ntpServer();
+
+// Stores new station credentials (and, optionally, a custom NTP server) and
+// restarts the device to apply them (simplest reliable way to cleanly retry
+// Network::begin() with the new settings, rather than tearing down and
+// reconfiguring WiFi live). Pass an empty ntpServer to keep the current one.
+void configureStation(const String &ssid, const String &password, const String &ntpServer = "");
 
 } // namespace Network
