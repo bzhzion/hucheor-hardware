@@ -10,17 +10,20 @@ ESP32 firmware for the Hucheor beacon, built with [PlatformIO](https://platformi
 - Audio (`audio_player.h`/`.cpp`): plays a mono/stereo 16-bit PCM WAV file from LittleFS over I2S.
   Native ESP32 I2S driver only, no third-party audio library (the obvious choice, ESP8266Audio, is
   GPLv3 — incompatible with this repo's CC BY-NC 4.0 license).
-- Config server (`config_server.h`/`.cpp`): WiFi AP (`Hucheor-XXXX`) + accessible HTML pages to
-  upload separate open/closed messages and edit opening hours. Real `<label>`s, visible focus
-  outlines, only JS on the page is a tiny clock-sync snippet - matches the WCAG 2.2 AA baseline
-  required project-wide.
+- Network (`network.h`/`.cpp`): two connection modes. Standalone (default) creates its own WiFi
+  AP (`Hucheor-XXXX`); station joins the shop's own WiFi instead, falling back to standalone
+  automatically if that fails. Station mode advertises itself via mDNS (`hucheor-xxxx.local`) for
+  a future companion app to discover it, and syncs time via NTP since it has internet access.
+- Config server (`config_server.h`/`.cpp`): accessible HTML pages (real `<label>`s, visible focus
+  outlines, only JS on the page is a tiny clock-sync snippet - WCAG 2.2 AA baseline required
+  project-wide) to upload separate open/closed messages, edit opening hours, and switch WiFi mode.
 - Schedule (`schedule.h`/`.cpp`): up to 4 seasonal weekly models (e.g. "Standard", "Summer"), and
   up to 12 ISO week ranges (1-53) assigning which model applies when.
-- Clock: two independent sources, neither needs internet. The phone's clock, auto-synced whenever
-  the shopkeeper opens the config page (drifts between visits); and a **DCF77 longwave receiver**
-  (`dcf77_clock.h`/`.cpp`, one GPIO pin) for continuous accurate time with no phone involvement -
-  written from scratch against the public DCF77 telegram spec, same footing as this project's own
-  NF S32-002 work.
+- Clock: three independent sources, none require any DST rule hardcoded in this firmware (see
+  `schedule.h`'s top comment) - the phone's clock (auto-synced whenever the shopkeeper opens the
+  config page), a **DCF77 longwave receiver** (`dcf77_clock.h`/`.cpp`, one GPIO pin, written from
+  scratch against the public DCF77 telegram spec, same footing as this project's own NF S32-002
+  work), and NTP (only available in station mode).
 - Not yet wired up: the frame-decode -> audio-playback trigger exists in `main.cpp` but calls a
   decoder that always returns `false` for now.
 
