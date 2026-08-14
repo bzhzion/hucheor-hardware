@@ -1,0 +1,82 @@
+name: Check dependencies
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # tous les lundis, 6h UTC
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  check:
+    runs-on: [self-hosted, linux, x64, docker]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PlatformIO
+        run: |
+          python3 -m venv .pio-venv
+          .pio-venv/bin/pip install platformio
+
+      - name: Add PlatformIO to PATH
+        run: echo "$PWD/.pio-venv/bin" >> "$GITHUB_PATH"
+
+      # "pio pkg outdated" respecte les bornes semver de platformio.ini
+      # (ex: ^3.3.0 accepte les correctifs/mineures automatiquement a chaque
+      # build, sans intervention). Ce qu'il reste a surveiller ici, c'est
+      # surtout le franchissement d'une borne (nouvelle version majeure).
+      - name: Check outdated packages
+        id: outdated
+        working-directory: firmware
+        run: |
+          set +e
+          OUTPUT=$(pio pkg outdated 2>&1)
+          echo "$OUTPUT"
+          if echo "$OUTPUT" | grep -q "Everything is up-to-date"; then
+            echo "outdated=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "outdated=true" >> "$GITHUB_OUTPUT"
+          fi
+          {
+            echo "output<<PIO_OUTDATED_EOF"
+            echo "$OUTPUT"
+            echo "PIO_OUTDATED_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Open or update issue if outdated
+        if: steps.outdated.outputs.outdated == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PIO_OUTPUT: ${{ steps.outdated.outputs.output }}
+        run: |
+          TITLE="Mises a jour de dependances firmware disponibles"
+          BODY="Detecte automatiquement par le workflow check-deps.yml (\`pio pkg outdated\`):
+
+          \`\`\`
+          $PIO_OUTPUT
+          \`\`\`
+
+          A verifier manuellement en plus: CC1101-ESP-Arduino est reference par URL Git dans
+          platformio.ini (pas de version figee), donc ce check ne le couvre pas. Un nouveau build
+          propre peut recuperer un commit different de celui teste jusqu'ici."
+          EXISTING=$(gh issue list --search "$TITLE in:title" --state open --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --body "$BODY"
+          else
+            gh issue create --title "$TITLE" --body "$BODY"
+          fi
+
+      # Idempotent: referme automatiquement l'issue si les mises a jour
+      # signalees precedemment ont ete appliquees depuis.
+      - name: Close issue if back up to date
+        if: steps.outdated.outputs.outdated == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TITLE="Mises a jour de dependances firmware disponibles"
+          EXISTING=$(gh issue list --search "$TITLE in:title" --state open --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --body "Toutes les dependances sont a jour desormais (pio pkg outdated)."
+            gh issue close "$EXISTING"
+          fi
