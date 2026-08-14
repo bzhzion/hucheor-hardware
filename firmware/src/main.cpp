@@ -12,12 +12,19 @@
 #include <Arduino.h>
 #include <CC1101_ESP_Arduino.h>
 
+#include "audio_player.h"
+#include "config_server.h"
+
 // Wiring: to be confirmed once the first prototype is actually built.
 static const int PIN_SPI_SCK = 18;
 static const int PIN_SPI_MISO = 19;
 static const int PIN_SPI_MOSI = 23;
 static const int PIN_SPI_CS = 5;
 static const int PIN_RADIO_GDO0 = 4; // CC1101 data output, read on edge interrupt
+
+static const int PIN_I2S_BCK = 26;
+static const int PIN_I2S_WS = 25;
+static const int PIN_I2S_DATA = 27;
 
 CC1101 radio(PIN_SPI_SCK, PIN_SPI_MISO, PIN_SPI_MOSI, PIN_SPI_CS, PIN_RADIO_GDO0, PIN_RADIO_GDO0);
 
@@ -61,6 +68,12 @@ void setup() {
 
   attachInterrupt(digitalPinToInterrupt(PIN_RADIO_GDO0), onRadioEdge, CHANGE);
 
+  if (!AudioPlayer::begin(PIN_I2S_BCK, PIN_I2S_WS, PIN_I2S_DATA)) {
+    Serial.println("Hucheor: audio player init failed");
+  }
+
+  ConfigServer::begin();
+
   Serial.println("Hucheor: listening on 868.3 MHz (no frame decoding yet)");
 }
 
@@ -74,7 +87,7 @@ void loop() {
 
     if (matched) {
       Serial.println("Remote detected");
-      // TODO(hucheor): trigger audio playback here (v1 milestone).
+      AudioPlayer::playWavFile("/message.wav");
     }
   }
 }
