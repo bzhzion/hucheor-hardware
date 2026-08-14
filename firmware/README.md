@@ -1,58 +1,63 @@
 # Firmware
 
-ESP32 firmware for the Hucheor beacon, built with [PlatformIO](https://platformio.org/). See the
-[repository root README](../README.md) for the full walkthrough (setup, security posture, CI),
-this file stays a short per-module summary.
+Firmware ESP32 pour la balise Hucheor, construit avec [PlatformIO](https://platformio.org/). Voir
+le [README à la racine du dépôt](../README.md) pour le parcours complet (installation, posture
+sécurité, CI), ce fichier reste un résumé court par module.
 
-## Status
+## État
 
-- Radio: initialization and raw edge capture only. NF S32-002 frame decoding is **not
-  implemented** yet: see `src/main.cpp` for details on why (it needs real timing data from our
-  own RTL-SDR capture, not guessed or borrowed values).
-- Audio (`audio_player.h`/`.cpp`): plays a mono/stereo 16-bit PCM WAV file from LittleFS over I2S.
-  Native ESP32 I2S driver only, no third-party audio library (the obvious choice, ESP8266Audio, is
-  GPLv3: incompatible with this repo's CC BY-NC 4.0 license).
-- Network (`network.h`/`.cpp`): two connection modes. Standalone (default) creates its own WiFi
-  AP (`Hucheor-XXXX`); station joins the shop's own WiFi instead, falling back to standalone
-  automatically if that fails. Station mode advertises itself via mDNS (`hucheor-xxxx.local`) for
-  a future companion app to discover it, and syncs time via NTP since it has internet access.
-- Config server (`config_server.h`/`.cpp`): accessible HTML pages (real `<label>`s, visible focus
-  outlines, only JS on the page is a tiny clock-sync snippet - WCAG 2.2 AA baseline required
-  project-wide) to upload separate open/closed messages, edit opening hours, and switch WiFi mode.
-- Schedule (`schedule.h`/`.cpp`): up to 4 seasonal weekly models (e.g. "Standard", "Summer"), and
-  up to 12 ISO week ranges (1-53) assigning which model applies when.
-- Clock: three independent sources, none require any DST rule hardcoded in this firmware (see
-  `schedule.h`'s top comment) - the phone's clock (auto-synced whenever the shopkeeper opens the
-  config page), a **DCF77 longwave receiver** (`dcf77_clock.h`/`.cpp`, one GPIO pin, written from
-  scratch against the public DCF77 telegram spec, same footing as this project's own NF S32-002
-  work), and NTP (only available in station mode).
-- Not yet wired up: the frame-decode -> audio-playback trigger exists in `main.cpp` but calls a
-  decoder that always returns `false` for now.
+- Radio : initialisation et capture brute des fronts uniquement. Le décodage de trame NF S32-002
+  n'est **pas implémenté** pour l'instant : voir `src/main.cpp` pour le détail du pourquoi (ça
+  nécessite des données de timing réelles issues de notre propre capture RTL-SDR, pas des valeurs
+  devinées ou empruntées).
+- Audio (`audio_player.h`/`.cpp`) : joue un fichier WAV PCM 16 bits mono/stéréo depuis LittleFS via
+  I2S. Uniquement le driver I2S natif de l'ESP32, aucune bibliothèque audio tierce (le choix
+  évident, ESP8266Audio, est en GPLv3 : incompatible avec la licence CC BY-NC 4.0 de ce dépôt).
+- Réseau (`network.h`/`.cpp`) : deux modes de connexion. Autonome (par défaut) crée son propre
+  point d'accès WiFi (`Hucheor-XXXX`) ; station rejoint plutôt le WiFi propre du commerce, avec
+  repli automatique sur le mode autonome en cas d'échec. Le mode station s'annonce via mDNS
+  (`hucheor-xxxx.local`) pour qu'une future application compagnon puisse le découvrir, et
+  synchronise l'heure via NTP puisqu'il a accès à internet.
+- Serveur de configuration (`config_server.h`/`.cpp`) : pages HTML accessibles (de vrais
+  `<label>`, contours de focus visibles, seul JS de la page : un petit script de synchronisation
+  d'horloge - le seuil WCAG 2.2 AA est requis sur tout le projet) pour envoyer les messages
+  ouvert/fermé séparément, modifier les horaires d'ouverture, et changer de mode WiFi.
+- Planification (`schedule.h`/`.cpp`) : jusqu'à 4 modèles hebdomadaires saisonniers (ex.
+  "Standard", "Été"), et jusqu'à 12 plages de semaines ISO (1-53) assignant quel modèle s'applique
+  quand.
+- Horloge : trois sources indépendantes, aucune ne nécessite de règle de changement d'heure codée
+  en dur dans ce firmware (voir le commentaire en tête de `schedule.h`) - l'horloge du téléphone
+  (synchronisée automatiquement à chaque fois que le commerçant ouvre la page de configuration), un
+  **récepteur grandes ondes DCF77** (`dcf77_clock.h`/`.cpp`, une seule broche GPIO, écrit depuis
+  zéro à partir de la spécification publique du télégramme DCF77, sur le même principe que le
+  travail NF S32-002 propre à ce projet), et NTP (disponible uniquement en mode station).
+- Pas encore câblé : le déclenchement décodage de trame -> lecture audio existe dans `main.cpp`
+  mais appelle un décodeur qui renvoie toujours `false` pour l'instant.
 
-## Build
+## Compilation
 
 ```
 cd firmware
 pio run
 ```
 
-## Hardware (planned)
+## Matériel (prévu)
 
-- MCU: ESP32 (S3 or C3 preferred)
-- Radio: CC1101 (SPI), 868.3 MHz OOK
-- Audio: MAX98357A (I2S) + speaker
-- Clock: DCF77 receiver module (~5-10 EUR, one GPIO pin), optional but recommended
-- Wiring: not finalized, see `src/main.cpp` pin comments; will be updated once the first
-  prototype is actually wired and tested.
+- MCU : ESP32 (S3 ou C3 de préférence)
+- Radio : CC1101 (SPI), 868,3 MHz OOK
+- Audio : MAX98357A (I2S) + haut-parleur
+- Horloge : module récepteur DCF77 (~5-10 EUR, une broche GPIO), optionnel mais recommandé
+- Câblage : pas encore finalisé, voir les commentaires de broches dans `src/main.cpp` ; sera mis à
+  jour une fois le premier prototype réellement câblé et testé.
 
-## License
+## Licence
 
-Code in this folder is licensed under CC BY-NC 4.0 (see repository root `LICENSE.md` /
-`NOTICE.md`). Third-party dependencies pulled via PlatformIO keep their own licenses:
-- `CC1101-ESP-Arduino`: MIT
-- `ESPAsyncWebServer` / `AsyncTCP`: LGPL-3.0 (weak copyleft, safe to depend on: unlike GPL/AGPL,
-  LGPL explicitly allows linking from differently-licensed code)
-- LittleFS: bundled with the Arduino ESP32 core itself, not a separate dependency
+Le code de ce dossier est sous licence CC BY-NC 4.0 (voir `LICENSE.md`/`NOTICE.md` à la racine du
+dépôt). Les dépendances tierces récupérées via PlatformIO gardent leur propre licence :
+- `CC1101-ESP-Arduino` : MIT
+- `ESPAsyncWebServer` / `AsyncTCP` : LGPL-3.0 (copyleft faible, sûr en dépendance : contrairement à
+  GPL/AGPL, LGPL autorise explicitement la liaison depuis du code sous une licence différente)
+- LittleFS : fourni avec le core Arduino ESP32 lui-même, pas une dépendance séparée
 
-Rejected: `ESP8266Audio` (GPLv3: would force this whole firmware under GPL, incompatible with
-CC BY-NC 4.0).
+Écarté : `ESP8266Audio` (GPLv3 : forcerait tout ce firmware sous GPL, incompatible avec CC BY-NC
+4.0).
