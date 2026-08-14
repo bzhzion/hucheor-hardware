@@ -142,7 +142,8 @@ connection attempt at boot (up to 15s, before anything else has started).
 `firmware/src/config_server.{h,cpp}`. A small embedded HTTP server (no external assets, works
 fully offline on the standalone AP) for the shopkeeper to configure the beacon from any phone
 browser - no app required for setup. Protected by HTTP Digest Auth (a 12-digit code, generated
-once per device, never sent in clear text over the network - see [Security](#security)).
+once per device, never sent in clear text over the network - see [Security](#security)). Every
+page's footer shows the running firmware version (see [Versioning](#versioning)).
 
 | Page | What it's for |
 |---|---|
@@ -217,12 +218,28 @@ constrained to physical WiFi proximity - not a service exposed to the internet).
 
 ## Continuous integration
 
-Two scheduled/triggered GitHub Actions workflows:
+Three GitHub Actions workflows:
 - **Build** (`.github/workflows/build-firmware.yml`): compiles the firmware on every push/PR that
   touches `firmware/`.
 - **Dependency check** (`.github/workflows/check-deps.yml`): runs weekly (and on demand), checks
   for outdated PlatformIO packages, and opens/closes a GitHub issue automatically depending on the
   result.
+- **Release** (`.github/workflows/release.yml`): triggered by pushing a `vX.Y.Z` tag. Builds the
+  firmware with that version stamped in (see [Versioning](#versioning) below) and publishes a
+  GitHub Release with the compiled `firmware.bin`/`firmware.elf` attached.
+
+## Versioning
+
+The version shown at the bottom of every [config UI](#configuration-ui) page comes from the Git
+tag used to build that firmware, never a hardcoded value in source. `firmware/scripts/gen_version.py`
+(a PlatformIO pre-build script) generates `firmware/include/version.h` from the `FIRMWARE_VERSION`
+environment variable, set to the pushed tag by the release workflow above - falls back to `"dev"`
+for any build that isn't triggered by a tag (local builds, the plain CI build/PR checks), so it's
+always obvious whether a given firmware came from an official release. Same pattern as this
+ecosystem's mobile apps (see the admin repo's `docs/mobile-app-releases.md`): the version is
+stamped in at build time, never committed.
+
+To cut a release: `git tag vX.Y.Z && git push origin vX.Y.Z`.
 
 ## Building the firmware
 

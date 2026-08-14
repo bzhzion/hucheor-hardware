@@ -6,8 +6,16 @@
 
 #include "network.h"
 #include "schedule.h"
+#include "version.h" // generated at build time, see scripts/gen_version.py
 
 namespace {
+
+// Shown at the bottom of every config page - lets a shopkeeper (or, more
+// realistically, whoever is helping them remotely) tell at a glance whether
+// the device is running an official tagged release or a local dev build.
+#define HUCHEOR_FOOTER \
+  "<p class=\"hint\" style=\"margin-top:2rem;text-align:center\">Hucheor firmware " \
+  FIRMWARE_VERSION "</p>"
 
 AsyncWebServer server(80);
 Preferences prefs;
@@ -131,6 +139,7 @@ const char INDEX_HTML[] PROGMEM =
     "<button type=\"submit\">Envoyer</button>"
     "</form>"
     "</div>"
+    HUCHEOR_FOOTER
     "</body></html>";
 
 const char SUCCESS_HTML[] PROGMEM =
@@ -146,6 +155,7 @@ const char SUCCESS_HTML[] PROGMEM =
     "<p>Le message audio a bien &eacute;t&eacute; mis &agrave; jour.</p>"
     "<p class=\"hint\"><a href=\"/\">Retour</a></p>"
     "</div>"
+    HUCHEOR_FOOTER
     "</body></html>";
 
 bool requireAuth(AsyncWebServerRequest *request) {
@@ -246,6 +256,7 @@ String buildScheduleHtml(int currentModel) {
   html += "<p class=\"hint\">Laissez d&eacute;but &agrave; 0 pour d&eacute;sactiver une ligne.</p>"
           "<button type=\"submit\">Enregistrer les semaines</button>"
           "</form></div>"
+          HUCHEOR_FOOTER
           "</body></html>";
   return html;
 }
@@ -378,8 +389,10 @@ void begin() {
             "<p class=\"hint\">Laissez le nom de r&eacute;seau vide et enregistrez pour revenir au "
             "point d'acc&egrave;s autonome. Le serveur NTP n'est utilis&eacute; que si le bo&icirc;tier rejoint un "
             "r&eacute;seau WiFi. Le bo&icirc;tier red&eacute;marre pour appliquer le changement.</p>"
-            "<button type=\"submit\">Enregistrer et redemarrer</button>"
-            "</form></div></body></html>";
+            "<button type=\"submit\">Enregistrer et red&eacute;marrer</button>"
+            "</form></div>"
+            HUCHEOR_FOOTER
+            "</body></html>";
     request->send(200, "text/html", html);
   });
 

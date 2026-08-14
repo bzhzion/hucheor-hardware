@@ -2,6 +2,10 @@
 firmware/.pio/
 .pio-venv/
 
+# Generated at build time from FIRMWARE_VERSION (a Git tag in release builds, "dev"
+# otherwise) - see firmware/scripts/gen_version.py, never committed.
+firmware/include/version.h
+
 # KiCad / EDA backups
 *.bak
 *-backups/

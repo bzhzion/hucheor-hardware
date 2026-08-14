@@ -1,0 +1,44 @@
+name: Release firmware
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: [self-hosted, linux, x64, docker]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PlatformIO
+        run: |
+          python3 -m venv .pio-venv
+          .pio-venv/bin/pip install platformio
+
+      - name: Add PlatformIO to PATH
+        run: echo "$PWD/.pio-venv/bin" >> "$GITHUB_PATH"
+
+      # FIRMWARE_VERSION is read by firmware/scripts/gen_version.py (a
+      # PlatformIO pre-build script) and stamped into firmware/include/version.h,
+      # never committed - same pattern as the mobile apps' tag-based releases
+      # (see admin repo docs/mobile-app-releases.md). Shown in the config UI
+      # footer (see config_server.cpp).
+      - name: Build firmware
+        working-directory: firmware
+        env:
+          FIRMWARE_VERSION: ${{ github.ref_name }}
+        run: pio run
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            "firmware/.pio/build/esp32dev/firmware.bin" \
+            "firmware/.pio/build/esp32dev/firmware.elf" \
+            --title "Firmware ${{ github.ref_name }}" \
+            --generate-notes
