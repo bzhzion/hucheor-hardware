@@ -261,14 +261,8 @@ on this project.
 
 ## Approach
 
-This project does not reuse code from [Ouistici](https://balises-ouistici.org/)'s
-`esp-arduino-nfs32002` (AGPLv3): that repo's reusable library doesn't actually compile (several
-unrelated bugs - mismatched member variables, a radio object that goes out of scope, an
-interrupt attached to a non-static class method, duplicate declarations), and reusing AGPL code
-would force this whole repository under AGPLv3, which conflicts with the license below. Hucheor's
-firmware is written independently, using only the same publicly documented radio parameters of
-the NF S32-002 standard (868.3 MHz, OOK) and Ouistici's general approach as inspiration, not their
-code.
+Hucheor's firmware is written independently, from scratch, using only the publicly documented
+radio parameters of the NF S32-002 standard (868.3 MHz, OOK) - no borrowed code.
 
 Radio frame decoding is deliberately left unimplemented (`matchesNfS32002Frame()` always returns
 `false`) until a real signal has been captured with an RTL-SDR from an actual NF S32-002 remote -
@@ -282,8 +276,5 @@ for a friend for free, or for your own organization's internal use, and modify/s
 no one besides BREIZHZION may sell, charge for, or otherwise commercially provide a Hucheor
 beacon or a device built from these files, including nonprofit associations.
 
-## Credits
-
-Inspired by prior work by [Ouistici](https://balises-ouistici.org/) (Les Petites Débrouillardes
-Auvergne-Rhône-Alpes), dormant since August 2024 - see [Approach](#approach) above for why their
-code isn't reused directly.
+This is deliberately **not an OSI-style open source license**: commercial resale is excluded, so
+this project should be described as source-available, not open source.

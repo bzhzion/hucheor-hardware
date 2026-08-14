@@ -1,8 +1,8 @@
 // Hucheor beacon firmware skeleton (ESP32 + CC1101 @ 868.3 MHz OOK).
 //
-// This is written from scratch (clean room): it does not reuse any code from
-// balises-ouistici/esp-arduino-nfs32002 (AGPLv3), only the same publicly
-// documented radio parameters of the NF S32-002 standard (868.3 MHz, OOK).
+// This is written from scratch: only the publicly documented radio
+// parameters of the NF S32-002 standard (868.3 MHz, OOK) are used, no
+// borrowed code or timing constants.
 //
 // Status: radio init + raw edge capture only. The actual NF S32-002 frame
 // matching is NOT implemented yet - it needs real timing data from our own
@@ -54,8 +54,8 @@ void IRAM_ATTR onRadioEdge() {
 }
 
 // TODO(hucheor): implement once we have our own NF S32-002 capture.
-// Must not assume a single hardcoded timing table like Ouistici's prototype -
-// derive the real preamble/bit encoding from our own RTL-SDR recording first.
+// Must not assume a hardcoded timing table - derive the real preamble/bit
+// encoding from our own RTL-SDR recording first.
 bool matchesNfS32002Frame(const volatile uint32_t *intervalsUs, size_t count) {
   (void)intervalsUs;
   (void)count;
