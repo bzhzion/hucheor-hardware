@@ -95,6 +95,8 @@ void setup() {
 }
 
 void loop() {
+  Network::poll(); // non-blocking: station reconnect + periodic NTP resync, see network.h
+
   if (Dcf77Clock::poll()) {
     Serial.println("Hucheor: clock synced from DCF77");
   }

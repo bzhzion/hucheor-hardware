@@ -22,6 +22,15 @@ namespace Network {
 
 void begin();
 
+// Call from loop(), every iteration - cheap (a few millis()/status checks)
+// when there's nothing to do. Non-blocking, idempotent: handles station
+// WiFi reconnection after a drop (retried on a cooldown, never floods the
+// radio) and periodic NTP resync (first sync after joining, then every few
+// hours to correct drift) without ever stalling the rest of the firmware -
+// no delay() loops here, unlike the one-time boot-time connection attempt
+// in begin(), which blocks briefly before anything else has started.
+void poll();
+
 bool isStation();
 
 // "hucheor-XXXX" (from the chip's MAC) - the AP's SSID in standalone mode,
