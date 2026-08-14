@@ -1,0 +1,48 @@
+<!doctype html><html lang="fr"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hucheor - Configuration</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+max-width:440px;margin:2.5rem auto;padding:0 1.25rem;
+background:#f3e8d2;color:#241708;line-height:1.5}
+.eyebrow{display:inline-block;background:#241708;color:#e7c77a;
+font-weight:700;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;
+padding:.35rem .8rem;border-radius:999px;margin-bottom:1rem}
+h1{color:#b1451f;margin:0 0 .3rem;font-size:1.9rem}
+.card{background:#e9d9b6;border-radius:16px;padding:1.75rem;
+box-shadow:0 12px 24px -16px rgba(36,23,8,.35);margin-top:1.25rem}
+label{display:block;font-weight:700;margin-bottom:.5rem}
+.hint{font-size:.85rem;color:#4a3420;margin:.4rem 0 1.4rem}
+input[type=file],input[type=time]{display:block;width:100%;padding:.6rem;
+border:1px solid #cbb98f;border-radius:8px;background:#fff;color:#241708}
+button{font-size:1.05rem;font-weight:700;padding:.8rem 1.75rem;
+border-radius:999px;border:none;background:#b1451f;color:#f3e8d2;
+cursor:pointer;margin-top:1.4rem;transition:background .2s ease}
+button:hover{background:#8a3417}
+button:focus-visible,input:focus-visible{outline:3px solid #241708;outline-offset:2px}
+a{color:#8a3417}
+nav{margin:1rem 0}
+</style>
+</head><body>
+<span class="eyebrow">Configuration du boîtier</span>
+<h1>Hucheor</h1>
+<nav><a href="/schedule">Horaires d'ouverture</a> &middot; <a href="/wifi">Réseau</a></nav>
+<div class="card">
+<form method="POST" action="/upload/open" enctype="multipart/form-data">
+<label for="wav-open">Message quand le commerce est ouvert (.wav)</label>
+<input type="file" id="wav-open" name="wav" accept="audio/wav" required>
+<p class="hint">Format WAV, 2 Mo maximum.</p>
+<button type="submit">Envoyer</button>
+</form>
+</div>
+<div class="card">
+<form method="POST" action="/upload/closed" enctype="multipart/form-data">
+<label for="wav-closed">Message quand le commerce est fermé (.wav)</label>
+<input type="file" id="wav-closed" name="wav" accept="audio/wav" required>
+<p class="hint">Format WAV, 2 Mo maximum.</p>
+<button type="submit">Envoyer</button>
+</form>
+</div>
+</body></html>

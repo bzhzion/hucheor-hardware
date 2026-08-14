@@ -27,5 +27,5 @@ plans are public and free to build for yourself," not the OSI-certified term.
 
 As the copyright holder, BREIZHZION is not bound by the public license it grants to others.
 BREIZHZION offers a paid construction/installation/maintenance service using these designs on
-communes in the Rhône (France) — this is the one exception to the "no commercial use" rule,
+communes in the Rhône (France) - this is the one exception to the "no commercial use" rule,
 reserved to the original rightsholder, not available to anyone else.

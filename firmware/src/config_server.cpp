@@ -112,9 +112,9 @@ const char INDEX_HTML[] PROGMEM =
     "<title>Hucheor - Configuration</title>"
     HUCHEOR_STYLE_BLOCK
     "</head><body>"
-    "<span class=\"eyebrow\">Configuration du boitier</span>"
+    "<span class=\"eyebrow\">Configuration du bo&icirc;tier</span>"
     "<h1>Hucheor</h1>"
-    "<nav><a href=\"/schedule\">Horaires d'ouverture</a> &middot; <a href=\"/wifi\">Reseau</a></nav>"
+    "<nav><a href=\"/schedule\">Horaires d'ouverture</a> &middot; <a href=\"/wifi\">R&eacute;seau</a></nav>"
     "<div class=\"card\">"
     "<form method=\"POST\" action=\"/upload/open\" enctype=\"multipart/form-data\">"
     "<label for=\"wav-open\">Message quand le commerce est ouvert (.wav)</label>"
@@ -125,7 +125,7 @@ const char INDEX_HTML[] PROGMEM =
     "</div>"
     "<div class=\"card\">"
     "<form method=\"POST\" action=\"/upload/closed\" enctype=\"multipart/form-data\">"
-    "<label for=\"wav-closed\">Message quand le commerce est ferme (.wav)</label>"
+    "<label for=\"wav-closed\">Message quand le commerce est ferm&eacute; (.wav)</label>"
     "<input type=\"file\" id=\"wav-closed\" name=\"wav\" accept=\"audio/wav\" required>"
     "<p class=\"hint\">Format WAV, 2 Mo maximum.</p>"
     "<button type=\"submit\">Envoyer</button>"
@@ -137,13 +137,13 @@ const char SUCCESS_HTML[] PROGMEM =
     "<!doctype html><html lang=\"fr\"><head>"
     "<meta charset=\"UTF-8\">"
     "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
-    "<title>Hucheor - Message mis a jour</title>"
+    "<title>Hucheor - Message mis &agrave; jour</title>"
     HUCHEOR_STYLE_BLOCK
     "</head><body>"
-    "<span class=\"eyebrow\">Configuration du boitier</span>"
+    "<span class=\"eyebrow\">Configuration du bo&icirc;tier</span>"
     "<h1>Hucheor</h1>"
     "<div class=\"card\">"
-    "<p>Le message audio a bien ete mis a jour.</p>"
+    "<p>Le message audio a bien &eacute;t&eacute; mis &agrave; jour.</p>"
     "<p class=\"hint\"><a href=\"/\">Retour</a></p>"
     "</div>"
     "</body></html>";
@@ -181,14 +181,14 @@ String buildScheduleHtml(int currentModel) {
           "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
           "<title>Hucheor - Horaires</title>" HUCHEOR_STYLE_BLOCK
           "</head><body>"
-          "<span class=\"eyebrow\">Configuration du boitier</span>"
+          "<span class=\"eyebrow\">Configuration du bo&icirc;tier</span>"
           "<h1>Horaires d'ouverture</h1>"
           "<nav><a href=\"/\">Retour</a></nav>";
 
   // Model switcher: each model is a full week schedule (e.g. "Standard",
   // "Ete", "Vacances de Noel"). Which one applies to which week of the year
   // is decided further down, in the week-ranges table.
-  html += "<div class=\"card\"><label>Modele en cours d'edition</label><nav>";
+  html += "<div class=\"card\"><label>Mod&egrave;le en cours d'&eacute;dition</label><nav>";
   for (int m = 0; m < Schedule::MAX_MODELS; m++) {
     html += "<a href=\"/schedule?model=" + String(m) + "\"" +
             (m == currentModel ? " style=\"font-weight:700\"" : "") + ">" + Schedule::modelName(m) +
@@ -198,7 +198,7 @@ String buildScheduleHtml(int currentModel) {
 
   html += "<form method=\"POST\" action=\"/schedule\">"
           "<input type=\"hidden\" name=\"model\" value=\"" + String(currentModel) + "\">"
-          "<label for=\"mname\">Nom de ce modele</label>"
+          "<label for=\"mname\">Nom de ce mod&egrave;le</label>"
           "<input type=\"text\" id=\"mname\" name=\"mname\" maxlength=\"24\" value=\"" +
           Schedule::modelName(currentModel) + "\" style=\"margin-bottom:1.2rem\">";
 
@@ -217,23 +217,23 @@ String buildScheduleHtml(int currentModel) {
     html += "</div>";
   }
 
-  html += "<p class=\"hint\">Cochez les jours ouverts et reglez les horaires de ce modele. "
-          "Un jour non coche est considere ferme toute la journee.</p>"
-          "<button type=\"submit\">Enregistrer ce modele</button>"
+  html += "<p class=\"hint\">Cochez les jours ouverts et r&eacute;glez les horaires de ce mod&egrave;le. "
+          "Un jour non coch&eacute; est consid&eacute;r&eacute; ferm&eacute; toute la journ&eacute;e.</p>"
+          "<button type=\"submit\">Enregistrer ce mod&egrave;le</button>"
           "</form></div>";
 
   // Week ranges: which model applies to which weeks of the year (ISO week
   // numbers, 1-53). A week with no matching range falls back to the first
   // model ("Standard").
   html += "<div class=\"card\"><form method=\"POST\" action=\"/schedule/ranges\">"
-          "<label>Semaines de l'annee (1 a 53)</label>"
-          "<p class=\"hint\">Exemple : de la semaine 1 a 26, modele Standard ; "
-          "de la semaine 27 a 35, modele Ete.</p>";
+          "<label>Semaines de l'ann&eacute;e (1 &agrave; 53)</label>"
+          "<p class=\"hint\">Exemple : de la semaine 1 &agrave; 26, mod&egrave;le Standard ; "
+          "de la semaine 27 &agrave; 35, mod&egrave;le &Eacute;t&eacute;.</p>";
   for (int i = 0; i < Schedule::MAX_RANGES; i++) {
     Schedule::WeekRange r = Schedule::getRange(i);
     html += "<div class=\"day-row\">";
     html += "<input type=\"number\" min=\"0\" max=\"53\" name=\"r" + String(i) + "_start\" "
-            "value=\"" + String(r.startWeek) + "\" placeholder=\"debut\" style=\"width:4.5rem\">";
+            "value=\"" + String(r.startWeek) + "\" placeholder=\"d&eacute;but\" style=\"width:4.5rem\">";
     html += "<input type=\"number\" min=\"0\" max=\"53\" name=\"r" + String(i) + "_end\" "
             "value=\"" + String(r.endWeek) + "\" placeholder=\"fin\" style=\"width:4.5rem\">";
     html += "<select name=\"r" + String(i) + "_model\">";
@@ -243,7 +243,7 @@ String buildScheduleHtml(int currentModel) {
     }
     html += "</select></div>";
   }
-  html += "<p class=\"hint\">Laissez debut a 0 pour desactiver une ligne.</p>"
+  html += "<p class=\"hint\">Laissez d&eacute;but &agrave; 0 pour d&eacute;sactiver une ligne.</p>"
           "<button type=\"submit\">Enregistrer les semaines</button>"
           "</form></div>"
           "</body></html>";
@@ -350,34 +350,34 @@ void begin() {
     html += "<!doctype html><html lang=\"fr\"><head>"
             "<meta charset=\"UTF-8\">"
             "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
-            "<title>Hucheor - Reseau</title>" HUCHEOR_STYLE_BLOCK
+            "<title>Hucheor - R&eacute;seau</title>" HUCHEOR_STYLE_BLOCK
             "</head><body>"
-            "<span class=\"eyebrow\">Configuration du boitier</span>"
-            "<h1>Reseau</h1>"
+            "<span class=\"eyebrow\">Configuration du bo&icirc;tier</span>"
+            "<h1>R&eacute;seau</h1>"
             "<nav><a href=\"/\">Retour</a></nav>"
             "<div class=\"card\"><p>";
     if (Network::isStation()) {
-      html += "Le boitier est connecte au reseau WiFi <strong>" + Network::stationSsid() +
-              "</strong>. Il est aussi joignable sur ce reseau via <strong>" +
+      html += "Le bo&icirc;tier est connect&eacute; au r&eacute;seau WiFi <strong>" + Network::stationSsid() +
+              "</strong>. Il est aussi joignable sur ce r&eacute;seau via <strong>" +
               Network::hostname() + ".local</strong>, et l'heure se synchronise "
               "automatiquement par Internet (NTP).";
     } else {
-      html += "Le boitier fonctionne en point d'acces autonome (<strong>" + Network::hostname() +
+      html += "Le bo&icirc;tier fonctionne en point d'acc&egrave;s autonome (<strong>" + Network::hostname() +
               "</strong>), sans connexion Internet.";
     }
     html += "</p>"
             "<form method=\"POST\" action=\"/wifi\">"
             "<label for=\"ssid\">Rejoindre le WiFi du commerce (optionnel)</label>"
             "<input type=\"text\" id=\"ssid\" name=\"ssid\" maxlength=\"32\" "
-            "placeholder=\"Nom du reseau WiFi\" value=\"" + Network::stationSsid() + "\">"
+            "placeholder=\"Nom du r&eacute;seau WiFi\" value=\"" + Network::stationSsid() + "\">"
             "<label for=\"pass\" style=\"margin-top:1rem\">Mot de passe</label>"
             "<input type=\"password\" id=\"pass\" name=\"pass\" maxlength=\"63\">"
             "<label for=\"ntp\" style=\"margin-top:1rem\">Serveur NTP (heure par Internet)</label>"
             "<input type=\"text\" id=\"ntp\" name=\"ntp\" maxlength=\"63\" "
             "value=\"" + Network::ntpServer() + "\">"
-            "<p class=\"hint\">Laissez le nom de reseau vide et enregistrez pour revenir au "
-            "point d'acces autonome. Le serveur NTP n'est utilise que si le boitier rejoint un "
-            "reseau WiFi. Le boitier redemarre pour appliquer le changement.</p>"
+            "<p class=\"hint\">Laissez le nom de r&eacute;seau vide et enregistrez pour revenir au "
+            "point d'acc&egrave;s autonome. Le serveur NTP n'est utilis&eacute; que si le bo&icirc;tier rejoint un "
+            "r&eacute;seau WiFi. Le bo&icirc;tier red&eacute;marre pour appliquer le changement.</p>"
             "<button type=\"submit\">Enregistrer et redemarrer</button>"
             "</form></div></body></html>";
     request->send(200, "text/html", html);
@@ -388,7 +388,7 @@ void begin() {
     String ssid = request->hasParam("ssid", true) ? request->getParam("ssid", true)->value() : "";
     String pass = request->hasParam("pass", true) ? request->getParam("pass", true)->value() : "";
     String ntp = request->hasParam("ntp", true) ? request->getParam("ntp", true)->value() : "";
-    request->send(200, "text/plain", "Redemarrage en cours...");
+    request->send(200, "text/plain", "Red\xC3\xA9marrage en cours...");
     Network::configureStation(ssid, pass, ntp); // restarts the device, does not return
   });
 
@@ -397,7 +397,7 @@ void begin() {
     if (uploadTooLarge) {
       LittleFS.remove(path); // don't leave a truncated/corrupt WAV as the active message
       request->send(413, "text/plain",
-                     "Fichier trop volumineux (2 Mo maximum). Rien n'a ete change.");
+                     "Fichier trop volumineux (2 Mo maximum). Rien n'a \xC3\xA9t\xC3\xA9 chang\xC3\xA9.");
       return;
     }
     request->send_P(200, "text/html", SUCCESS_HTML);

@@ -1,0 +1,45 @@
+<!doctype html><html lang="fr"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hucheor - Réseau</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+max-width:440px;margin:2.5rem auto;padding:0 1.25rem;
+background:#f3e8d2;color:#241708;line-height:1.5}
+.eyebrow{display:inline-block;background:#241708;color:#e7c77a;
+font-weight:700;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;
+padding:.35rem .8rem;border-radius:999px;margin-bottom:1rem}
+h1{color:#b1451f;margin:0 0 .3rem;font-size:1.9rem}
+.card{background:#e9d9b6;border-radius:16px;padding:1.75rem;
+box-shadow:0 12px 24px -16px rgba(36,23,8,.35);margin-top:1.25rem}
+label{display:block;font-weight:700;margin-bottom:.5rem}
+.hint{font-size:.85rem;color:#4a3420;margin:.4rem 0 1.4rem}
+input[type=file],input[type=time]{display:block;width:100%;padding:.6rem;
+border:1px solid #cbb98f;border-radius:8px;background:#fff;color:#241708}
+button{font-size:1.05rem;font-weight:700;padding:.8rem 1.75rem;
+border-radius:999px;border:none;background:#b1451f;color:#f3e8d2;
+cursor:pointer;margin-top:1.4rem;transition:background .2s ease}
+button:hover{background:#8a3417}
+button:focus-visible,input:focus-visible{outline:3px solid #241708;outline-offset:2px}
+a{color:#8a3417}
+nav{margin:1rem 0}
+</style>
+</head><body>
+<span class="eyebrow">Configuration du boîtier</span>
+<h1>Réseau</h1>
+<nav><a href="/">Retour</a></nav>
+<div class="card"><p>
+Le boîtier est connecté au réseau WiFi <strong>Boulangerie-Duval</strong>. Il est aussi joignable sur ce réseau via <strong>hucheor-4f2a.local</strong>, et l'heure se synchronise automatiquement par Internet (NTP).
+</p>
+<form method="POST" action="/wifi">
+<label for="ssid">Rejoindre le WiFi du commerce (optionnel)</label>
+<input type="text" id="ssid" name="ssid" maxlength="32" placeholder="Nom du réseau WiFi" value="Boulangerie-Duval">
+<label for="pass" style="margin-top:1rem">Mot de passe</label>
+<input type="password" id="pass" name="pass" maxlength="63">
+<label for="ntp" style="margin-top:1rem">Serveur NTP (heure par Internet)</label>
+<input type="text" id="ntp" name="ntp" maxlength="63" value="fr.pool.ntp.org">
+<p class="hint">Laissez le nom de réseau vide et enregistrez pour revenir au point d'accès autonome. Le serveur NTP n'est utilisé que si le boîtier rejoint un réseau WiFi. Le boîtier redémarre pour appliquer le changement.</p>
+<button type="submit">Enregistrer et redémarrer</button>
+</form></div>
+</body></html>

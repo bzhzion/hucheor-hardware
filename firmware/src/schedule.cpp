@@ -68,7 +68,7 @@ String modelName(int model) {
   prefs.begin(NAMESPACE, true);
   String name = prefs.getString((String("mname") + model).c_str(), "");
   prefs.end();
-  if (name.length() == 0) name = String("Modele ") + (model + 1);
+  if (name.length() == 0) name = String("Mod&egrave;le ") + (model + 1);
   return name;
 }
 

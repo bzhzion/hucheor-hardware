@@ -5,7 +5,7 @@
 // documented radio parameters of the NF S32-002 standard (868.3 MHz, OOK).
 //
 // Status: radio init + raw edge capture only. The actual NF S32-002 frame
-// matching is NOT implemented yet — it needs real timing data from our own
+// matching is NOT implemented yet - it needs real timing data from our own
 // RTL-SDR capture (see project roadmap) before it can be written correctly.
 // Do not guess or borrow timing constants from other projects here.
 
@@ -54,7 +54,7 @@ void IRAM_ATTR onRadioEdge() {
 }
 
 // TODO(hucheor): implement once we have our own NF S32-002 capture.
-// Must not assume a single hardcoded timing table like Ouistici's prototype —
+// Must not assume a single hardcoded timing table like Ouistici's prototype -
 // derive the real preamble/bit encoding from our own RTL-SDR recording first.
 bool matchesNfS32002Frame(const volatile uint32_t *intervalsUs, size_t count) {
   (void)intervalsUs;

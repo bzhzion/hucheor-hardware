@@ -1,0 +1,121 @@
+<!doctype html><html lang="fr"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hucheor - Horaires</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+max-width:440px;margin:2.5rem auto;padding:0 1.25rem;
+background:#f3e8d2;color:#241708;line-height:1.5}
+.eyebrow{display:inline-block;background:#241708;color:#e7c77a;
+font-weight:700;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;
+padding:.35rem .8rem;border-radius:999px;margin-bottom:1rem}
+h1{color:#b1451f;margin:0 0 .3rem;font-size:1.9rem}
+.card{background:#e9d9b6;border-radius:16px;padding:1.75rem;
+box-shadow:0 12px 24px -16px rgba(36,23,8,.35);margin-top:1.25rem}
+label{display:block;font-weight:700;margin-bottom:.5rem}
+.hint{font-size:.85rem;color:#4a3420;margin:.4rem 0 1.4rem}
+input[type=file],input[type=time]{display:block;width:100%;padding:.6rem;
+border:1px solid #cbb98f;border-radius:8px;background:#fff;color:#241708}
+button{font-size:1.05rem;font-weight:700;padding:.8rem 1.75rem;
+border-radius:999px;border:none;background:#b1451f;color:#f3e8d2;
+cursor:pointer;margin-top:1.4rem;transition:background .2s ease}
+button:hover{background:#8a3417}
+button:focus-visible,input:focus-visible{outline:3px solid #241708;outline-offset:2px}
+a{color:#8a3417}
+nav{margin:1rem 0}
+.day-row{display:flex;align-items:center;gap:.75rem;padding:.6rem 0;
+border-bottom:1px solid #cbb98f}
+.day-row:last-child{border-bottom:none}
+.day-row label.day-name{flex:1 0 90px;margin:0;font-weight:700}
+.day-row input[type=time]{width:auto;flex:1}
+</style>
+</head><body>
+<span class="eyebrow">Configuration du boîtier</span>
+<h1>Horaires d'ouverture</h1>
+<nav><a href="/">Retour</a></nav>
+<div class="card"><label>Modèle en cours d'édition</label><nav>
+<a href="/schedule?model=0" style="font-weight:700">Standard</a>
+<a href="/schedule?model=1">Été</a>
+<a href="/schedule?model=2">Vacances de Noël</a>
+<a href="/schedule?model=3">Modèle 4</a>
+</nav>
+<form method="POST" action="/schedule">
+<input type="hidden" name="model" value="0">
+<label for="mname">Nom de ce modèle</label>
+<input type="text" id="mname" name="mname" maxlength="24" value="Standard" style="margin-bottom:1.2rem">
+
+<div class="day-row">
+<label class="day-name" for="d0_en">Dimanche</label>
+<input type="checkbox" id="d0_en" name="d0_en">
+<input type="time" name="d0_open" value="00:00">
+<input type="time" name="d0_close" value="00:00">
+</div>
+<div class="day-row">
+<label class="day-name" for="d1_en">Lundi</label>
+<input type="checkbox" id="d1_en" name="d1_en">
+<input type="time" name="d1_open" value="00:00">
+<input type="time" name="d1_close" value="00:00">
+</div>
+<div class="day-row">
+<label class="day-name" for="d2_en">Mardi</label>
+<input type="checkbox" id="d2_en" name="d2_en" checked>
+<input type="time" name="d2_open" value="07:00">
+<input type="time" name="d2_close" value="19:30">
+</div>
+<div class="day-row">
+<label class="day-name" for="d3_en">Mercredi</label>
+<input type="checkbox" id="d3_en" name="d3_en" checked>
+<input type="time" name="d3_open" value="07:00">
+<input type="time" name="d3_close" value="19:30">
+</div>
+<div class="day-row">
+<label class="day-name" for="d4_en">Jeudi</label>
+<input type="checkbox" id="d4_en" name="d4_en" checked>
+<input type="time" name="d4_open" value="07:00">
+<input type="time" name="d4_close" value="19:30">
+</div>
+<div class="day-row">
+<label class="day-name" for="d5_en">Vendredi</label>
+<input type="checkbox" id="d5_en" name="d5_en" checked>
+<input type="time" name="d5_open" value="07:00">
+<input type="time" name="d5_close" value="19:30">
+</div>
+<div class="day-row">
+<label class="day-name" for="d6_en">Samedi</label>
+<input type="checkbox" id="d6_en" name="d6_en" checked>
+<input type="time" name="d6_open" value="07:00">
+<input type="time" name="d6_close" value="13:00">
+</div>
+
+<p class="hint">Cochez les jours ouverts et réglez les horaires de ce modèle. Un jour non coché est considéré fermé toute la journée.</p>
+<button type="submit">Enregistrer ce modèle</button>
+</form></div>
+
+<div class="card"><form method="POST" action="/schedule/ranges">
+<label>Semaines de l'année (1 à 53)</label>
+<p class="hint">Exemple : de la semaine 1 à 26, modèle Standard ; de la semaine 27 à 35, modèle Été.</p>
+<div class="day-row">
+<input type="number" min="0" max="53" name="r0_start" value="1" placeholder="début" style="width:4.5rem">
+<input type="number" min="0" max="53" name="r0_end" value="26" placeholder="fin" style="width:4.5rem">
+<select name="r0_model"><option value="0" selected>Standard</option><option value="1">Été</option><option value="2">Vacances de Noël</option><option value="3">Modèle 4</option></select>
+</div>
+<div class="day-row">
+<input type="number" min="0" max="53" name="r1_start" value="27" placeholder="début" style="width:4.5rem">
+<input type="number" min="0" max="53" name="r1_end" value="35" placeholder="fin" style="width:4.5rem">
+<select name="r1_model"><option value="0">Standard</option><option value="1" selected>Été</option><option value="2">Vacances de Noël</option><option value="3">Modèle 4</option></select>
+</div>
+<div class="day-row">
+<input type="number" min="0" max="53" name="r2_start" value="36" placeholder="début" style="width:4.5rem">
+<input type="number" min="0" max="53" name="r2_end" value="53" placeholder="fin" style="width:4.5rem">
+<select name="r2_model"><option value="0" selected>Standard</option><option value="1">Été</option><option value="2">Vacances de Noël</option><option value="3">Modèle 4</option></select>
+</div>
+<div class="day-row">
+<input type="number" min="0" max="53" name="r3_start" value="0" placeholder="début" style="width:4.5rem">
+<input type="number" min="0" max="53" name="r3_end" value="0" placeholder="fin" style="width:4.5rem">
+<select name="r3_model"><option value="0">Standard</option><option value="1">Été</option><option value="2">Vacances de Noël</option><option value="3">Modèle 4</option></select>
+</div>
+<p class="hint">Laissez début à 0 pour désactiver une ligne.</p>
+<button type="submit">Enregistrer les semaines</button>
+</form></div>
+</body></html>
