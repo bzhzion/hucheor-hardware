@@ -27,10 +27,10 @@ licence exclut volontairement. On évite donc le terme "open source" sur le site
 au profit d'"accès libre" ou "publié librement" - le code et les plans sont publics et libres à
 construire pour soi-même, mais ce n'est pas la définition certifiée OSI.
 
-## Usage commercial propre à BREIZHZION
+## Aide de BREIZHZION
 
-En tant que titulaire des droits d'auteur, BREIZHZION n'est pas lié par la licence publique qu'elle
-accorde à autrui. BREIZHZION propose un service payant de construction/installation/maintenance à
-partir de ces plans sur des communes du Rhône (France) - c'est la seule exception à la règle "pas
-d'usage commercial", réservée au titulaire d'origine des droits, non disponible pour qui que ce
-soit d'autre.
+En tant que titulaire des droits d'auteur, BREIZHZION n'est pas liée par la licence publique
+qu'elle accorde à autrui. Pour ceux qui préfèrent ne pas s'en charger eux-mêmes, BREIZHZION peut
+proposer une aide à la construction/installation/maintenance sur des communes du Rhône (France) -
+une possibilité réservée au titulaire d'origine des droits, pas une exception commerciale ouverte
+à qui que ce soit d'autre.
