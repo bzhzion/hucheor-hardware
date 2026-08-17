@@ -16,10 +16,10 @@ Ce dépôt contient tout ce qui est destiné à être librement partagé et auto
   [Interface de configuration](#interface-de-configuration) plus bas)
 
 Le projet global (contexte métier, déploiement, site web) vit dans un dépôt privé séparé. Celui-ci
-est la partie publique, en accès libre : n'importe qui peut récupérer ces fichiers, construire sa
-propre balise Hucheor pour un usage personnel ou interne, et la modifier. Voir
-[NOTICE.md](NOTICE.md) pour ce que ça permet exactement (et ce que ça ne permet pas) : ce n'est
-**pas** une licence open source au sens OSI, la revente commerciale est volontairement exclue.
+est la partie publique, en accès libre : n'importe qui peut consulter ces fichiers, les étudier, et
+construire un exemplaire pour son usage strictement personnel. Voir [NOTICE.md](NOTICE.md) pour ce
+que ça permet exactement (et ce que ça ne permet pas) : ce n'est **pas** une licence open source au
+sens OSI, et la fabrication pour un tiers (même gratuite, même associative) est exclue.
 
 ## État
 
@@ -312,12 +312,12 @@ télécommande NF S32-002 : aucune constante de timing devinée ou empruntée à
 
 ## Licence
 
-**CC BY-NC 4.0** (Attribution-NonCommercial). Voir [NOTICE.md](NOTICE.md) pour ce que ça veut dire
-en pratique, et [LICENSE.md](LICENSE.md) pour le texte légal complet. En résumé : construisez-en
-une pour vous-même, pour un ami gratuitement, ou pour l'usage interne de votre propre
-organisation, et modifiez/partagez librement, mais personne ne peut vendre, faire payer, ou
-fournir commercialement d'une autre façon une balise Hucheor ou un appareil construit à partir de
-ces fichiers, associations à but non lucratif comprises.
+**BREIZHZION Personal Use License (BZ-1.1)**. Voir [NOTICE.md](NOTICE.md) pour ce que ça veut dire
+en pratique, et [LICENSE.md](LICENSE.md) pour le texte légal complet. En résumé : lisez, étudiez,
+modifiez pour votre usage personnel, et construisez-en un seul exemplaire pour vous-même. Vous ne
+pouvez pas en fabriquer pour un tiers (même gratuitement, même associatif), ni distribuer une
+version modifiée. Seule BREIZHZION (ou un tiers avec une licence commerciale écrite) peut fabriquer
+pour autrui, vendre, installer ou fournir un service basé sur ce projet.
 
-Ce n'est volontairement **pas une licence open source au sens OSI** : la revente commerciale est
-exclue, donc ce projet doit être décrit comme en accès libre, pas open source.
+Ce n'est volontairement **pas une licence open source au sens OSI** : ce projet doit être décrit
+comme en accès libre, pas open source.

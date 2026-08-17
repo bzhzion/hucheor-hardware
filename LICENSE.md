@@ -1,421 +1,472 @@
-Copyright (c) 2026 BREIZHZION
-
-Human-readable summary (not a substitute for the license below):
-<https://creativecommons.org/licenses/by-nc/4.0/>
-
-See NOTICE.md for how this license applies to this specific project
-(personal, hobby, and internal business use allowed; resale or any
-commercial provision of the software, hardware designs, or built
-devices is not; BREIZHZION reserves commercial rights for itself as
-copyright holder).
-
-=======================================================================
-
-Attribution-NonCommercial 4.0 International
-
-=======================================================================
-
-Creative Commons Corporation ("Creative Commons") is not a law firm and
-does not provide legal services or legal advice. Distribution of
-Creative Commons public licenses does not create a lawyer-client or
-other relationship. Creative Commons makes its licenses and related
-information available on an "as-is" basis. Creative Commons gives no
-warranties regarding its licenses, any material licensed under their
-terms and conditions, or any related information. Creative Commons
-disclaims all liability for damages resulting from their use to the
-fullest extent possible.
-
-Using Creative Commons Public Licenses
-
-Creative Commons public licenses provide a standard set of terms and
-conditions that creators and other rights holders may use to share
-original works of authorship and other material subject to copyright
-and certain other rights specified in the public license below. The
-following considerations are for informational purposes only, are not
-exhaustive, and do not form part of our licenses.
-
-     Considerations for licensors: Our public licenses are
-     intended for use by those authorized to give the public
-     permission to use material in ways otherwise restricted by
-     copyright and certain other rights. Our licenses are
-     irrevocable. Licensors should read and understand the terms
-     and conditions of the license they choose before applying it.
-     Licensors should also secure all rights necessary before
-     applying our licenses so that the public can reuse the
-     material as expected. Licensors should clearly mark any
-     material not subject to the license. This includes other CC-
-     licensed material, or material used under an exception or
-     limitation to copyright. More considerations for licensors:
-    wiki.creativecommons.org/Considerations_for_licensors
-
-     Considerations for the public: By using one of our public
-     licenses, a licensor grants the public permission to use the
-     licensed material under specified terms and conditions. If
-     the licensor's permission is not necessary for any reason--for
-     example, because of any applicable exception or limitation to
-     copyright--then that use is not regulated by the license. Our
-     licenses grant only permissions under copyright and certain
-     other rights that a licensor has authority to grant. Use of
-     the licensed material may still be restricted for other
-     reasons, including because others have copyright or other
-     rights in the material. A licensor may make special requests,
-     such as asking that all changes be marked or described.
-     Although not required by our licenses, you are encouraged to
-     respect those requests where reasonable. More considerations
-     for the public:
-    wiki.creativecommons.org/Considerations_for_licensees
-
-=======================================================================
-
-Creative Commons Attribution-NonCommercial 4.0 International Public
-License
-
-By exercising the Licensed Rights (defined below), You accept and agree
-to be bound by the terms and conditions of this Creative Commons
-Attribution-NonCommercial 4.0 International Public License ("Public
-License"). To the extent this Public License may be interpreted as a
-contract, You are granted the Licensed Rights in consideration of Your
-acceptance of these terms and conditions, and the Licensor grants You
-such rights in consideration of benefits the Licensor receives from
-making the Licensed Material available under these terms and
-conditions.
-
-
-Section 1 -- Definitions.
-
-  a. Adapted Material means material subject to Copyright and Similar
-     Rights that is derived from or based upon the Licensed Material
-     and in which the Licensed Material is translated, altered,
-     arranged, transformed, or otherwise modified in a manner requiring
-     permission under the Copyright and Similar Rights held by the
-     Licensor. For purposes of this Public License, where the Licensed
-     Material is a musical work, performance, or sound recording,
-     Adapted Material is always produced where the Licensed Material is
-     synched in timed relation with a moving image.
-
-  b. Adapter's License means the license You apply to Your Copyright
-     and Similar Rights in Your contributions to Adapted Material in
-     accordance with the terms and conditions of this Public License.
-
-  c. Copyright and Similar Rights means copyright and/or similar rights
-     closely related to copyright including, without limitation,
-     performance, broadcast, sound recording, and Sui Generis Database
-     Rights, without regard to how the rights are labeled or
-     categorized. For purposes of this Public License, the rights
-     specified in Section 2(b)(1)-(2) are not Copyright and Similar
-     Rights.
-  d. Effective Technological Measures means those measures that, in the
-     absence of proper authority, may not be circumvented under laws
-     fulfilling obligations under Article 11 of the WIPO Copyright
-     Treaty adopted on December 20, 1996, and/or similar international
-     agreements.
-
-  e. Exceptions and Limitations means fair use, fair dealing, and/or
-     any other exception or limitation to Copyright and Similar Rights
-     that applies to Your use of the Licensed Material.
-
-  f. Licensed Material means the artistic or literary work, database,
-     or other material to which the Licensor applied this Public
-     License.
-
-  g. Licensed Rights means the rights granted to You subject to the
-     terms and conditions of this Public License, which are limited to
-     all Copyright and Similar Rights that apply to Your use of the
-     Licensed Material and that the Licensor has authority to license.
-
-  h. Licensor means the individual(s) or entity(ies) granting rights
-     under this Public License.
-
-  i. NonCommercial means not primarily intended for or directed towards
-     commercial advantage or monetary compensation. For purposes of
-     this Public License, the exchange of the Licensed Material for
-     other material subject to Copyright and Similar Rights by digital
-     file-sharing or similar means is NonCommercial provided there is
-     no payment of monetary compensation in connection with the
-     exchange.
-
-  j. Share means to provide material to the public by any means or
-     process that requires permission under the Licensed Rights, such
-     as reproduction, public display, public performance, distribution,
-     dissemination, communication, or importation, and to make material
-     available to the public including in ways that members of the
-     public may access the material from a place and at a time
-     individually chosen by them.
-
-  k. Sui Generis Database Rights means rights other than copyright
-     resulting from Directive 96/9/EC of the European Parliament and of
-     the Council of 11 March 1996 on the legal protection of databases,
-     as amended and/or succeeded, as well as other essentially
-     equivalent rights anywhere in the world.
-
-  l. You means the individual or entity exercising the Licensed Rights
-     under this Public License. Your has a corresponding meaning.
-
-
-Section 2 -- Scope.
-
-  a. License grant.
-
-       1. Subject to the terms and conditions of this Public License,
-          the Licensor hereby grants You a worldwide, royalty-free,
-          non-sublicensable, non-exclusive, irrevocable license to
-          exercise the Licensed Rights in the Licensed Material to:
-
-            a. reproduce and Share the Licensed Material, in whole or
-               in part, for NonCommercial purposes only; and
-
-            b. produce, reproduce, and Share Adapted Material for
-               NonCommercial purposes only.
-
-       2. Exceptions and Limitations. For the avoidance of doubt, where
-          Exceptions and Limitations apply to Your use, this Public
-          License does not apply, and You do not need to comply with
-          its terms and conditions.
-
-       3. Term. The term of this Public License is specified in Section
-          6(a).
-
-       4. Media and formats; technical modifications allowed. The
-          Licensor authorizes You to exercise the Licensed Rights in
-          all media and formats whether now known or hereafter created,
-          and to make technical modifications necessary to do so. The
-          Licensor waives and/or agrees not to assert any right or
-          authority to forbid You from making technical modifications
-          necessary to exercise the Licensed Rights, including
-          technical modifications necessary to circumvent Effective
-          Technological Measures. For purposes of this Public License,
-          simply making modifications authorized by this Section 2(a)
-          (4) never produces Adapted Material.
-
-       5. Downstream recipients.
-
-            a. Offer from the Licensor -- Licensed Material. Every
-               recipient of the Licensed Material automatically
-               receives an offer from the Licensor to exercise the
-               Licensed Rights under the terms and conditions of this
-               Public License.
-
-            b. No downstream restrictions. You may not offer or impose
-               any additional or different terms or conditions on, or
-               apply any Effective Technological Measures to, the
-               Licensed Material if doing so restricts exercise of the
-               Licensed Rights by any recipient of the Licensed
-               Material.
-
-       6. No endorsement. Nothing in this Public License constitutes or
-          may be construed as permission to assert or imply that You
-          are, or that Your use of the Licensed Material is, connected
-          with, or sponsored, endorsed, or granted official status by,
-          the Licensor or others designated to receive attribution as
-          provided in Section 3(a)(1)(A)(i).
-
-  b. Other rights.
-
-       1. Moral rights, such as the right of integrity, are not
-          licensed under this Public License, nor are publicity,
-          privacy, and/or other similar personality rights; however, to
-          the extent possible, the Licensor waives and/or agrees not to
-          assert any such rights held by the Licensor to the limited
-          extent necessary to allow You to exercise the Licensed
-          Rights, but not otherwise.
-
-       2. Patent and trademark rights are not licensed under this
-          Public License.
-
-       3. To the extent possible, the Licensor waives any right to
-          collect royalties from You for the exercise of the Licensed
-          Rights, whether directly or through a collecting society
-          under any voluntary or waivable statutory or compulsory
-          licensing scheme. In all other cases the Licensor expressly
-          reserves any right to collect such royalties, including when
-          the Licensed Material is used other than for NonCommercial
-          purposes.
-
-
-Section 3 -- License Conditions.
-
-Your exercise of the Licensed Rights is expressly made subject to the
-following conditions.
-
-  a. Attribution.
-
-       1. If You Share the Licensed Material (including in modified
-          form), You must:
-
-            a. retain the following if it is supplied by the Licensor
-               with the Licensed Material:
-
-                 i. identification of the creator(s) of the Licensed
-                    Material and any others designated to receive
-                    attribution, in any reasonable manner requested by
-                    the Licensor (including by pseudonym if
-                    designated);
-
-                ii. a copyright notice;
-
-               iii. a notice that refers to this Public License;
-
-                iv. a notice that refers to the disclaimer of
-                    warranties;
-
-                 v. a URI or hyperlink to the Licensed Material to the
-                    extent reasonably practicable;
-
-            b. indicate if You modified the Licensed Material and
-               retain an indication of any previous modifications; and
-
-            c. indicate the Licensed Material is licensed under this
-               Public License, and include the text of, or the URI or
-               hyperlink to, this Public License.
-
-       2. You may satisfy the conditions in Section 3(a)(1) in any
-          reasonable manner based on the medium, means, and context in
-          which You Share the Licensed Material. For example, it may be
-          reasonable to satisfy the conditions by providing a URI or
-          hyperlink to a resource that includes the required
-          information.
-
-       3. If requested by the Licensor, You must remove any of the
-          information required by Section 3(a)(1)(A) to the extent
-          reasonably practicable.
-
-       4. If You Share Adapted Material You produce, the Adapter's
-          License You apply must not prevent recipients of the Adapted
-          Material from complying with this Public License.
-
-
-Section 4 -- Sui Generis Database Rights.
-
-Where the Licensed Rights include Sui Generis Database Rights that
-apply to Your use of the Licensed Material:
-
-  a. for the avoidance of doubt, Section 2(a)(1) grants You the right
-     to extract, reuse, reproduce, and Share all or a substantial
-     portion of the contents of the database for NonCommercial purposes
-     only;
-
-  b. if You include all or a substantial portion of the database
-     contents in a database in which You have Sui Generis Database
-     Rights, then the database in which You have Sui Generis Database
-     Rights (but not its individual contents) is Adapted Material; and
-
-  c. You must comply with the conditions in Section 3(a) if You Share
-     all or a substantial portion of the contents of the database.
-
-For the avoidance of doubt, this Section 4 supplements and does not
-replace Your obligations under this Public License where the Licensed
-Rights include other Copyright and Similar Rights.
-
-
-Section 5 -- Disclaimer of Warranties and Limitation of Liability.
-
-  a. UNLESS OTHERWISE SEPARATELY UNDERTAKEN BY THE LICENSOR, TO THE
-     EXTENT POSSIBLE, THE LICENSOR OFFERS THE LICENSED MATERIAL AS-IS
-     AND AS-AVAILABLE, AND MAKES NO REPRESENTATIONS OR WARRANTIES OF
-     ANY KIND CONCERNING THE LICENSED MATERIAL, WHETHER EXPRESS,
-     IMPLIED, STATUTORY, OR OTHER. THIS INCLUDES, WITHOUT LIMITATION,
-     WARRANTIES OF TITLE, MERCHANTABILITY, FITNESS FOR A PARTICULAR
-     PURPOSE, NON-INFRINGEMENT, ABSENCE OF LATENT OR OTHER DEFECTS,
-     ACCURACY, OR THE PRESENCE OR ABSENCE OF ERRORS, WHETHER OR NOT
-     KNOWN OR DISCOVERABLE. WHERE DISCLAIMERS OF WARRANTIES ARE NOT
-     ALLOWED IN FULL OR IN PART, THIS DISCLAIMER MAY NOT APPLY TO YOU.
-
-  b. TO THE EXTENT POSSIBLE, IN NO EVENT WILL THE LICENSOR BE LIABLE
-     TO YOU ON ANY LEGAL THEORY (INCLUDING, WITHOUT LIMITATION,
-     NEGLIGENCE) OR OTHERWISE FOR ANY DIRECT, SPECIAL, INDIRECT,
-     INCIDENTAL, CONSEQUENTIAL, PUNITIVE, EXEMPLARY, OR OTHER LOSSES,
-     COSTS, EXPENSES, OR DAMAGES ARISING OUT OF THIS PUBLIC LICENSE OR
-     USE OF THE LICENSED MATERIAL, EVEN IF THE LICENSOR HAS BEEN
-     ADVISED OF THE POSSIBILITY OF SUCH LOSSES, COSTS, EXPENSES, OR
-     DAMAGES. WHERE A LIMITATION OF LIABILITY IS NOT ALLOWED IN FULL OR
-     IN PART, THIS LIMITATION MAY NOT APPLY TO YOU.
-
-  c. The disclaimer of warranties and limitation of liability provided
-     above shall be interpreted in a manner that, to the extent
-     possible, most closely approximates an absolute disclaimer and
-     waiver of all liability.
-
-
-Section 6 -- Term and Termination.
-
-  a. This Public License applies for the term of the Copyright and
-     Similar Rights licensed here. However, if You fail to comply with
-     this Public License, then Your rights under this Public License
-     terminate automatically.
-
-  b. Where Your right to use the Licensed Material has terminated under
-     Section 6(a), it reinstates:
-
-       1. automatically as of the date the violation is cured, provided
-          it is cured within 30 days of Your discovery of the
-          violation; or
-
-       2. upon express reinstatement by the Licensor.
-
-     For the avoidance of doubt, this Section 6(b) does not affect any
-     right the Licensor may have to seek remedies for Your violations
-     of this Public License.
-
-  c. For the avoidance of doubt, the Licensor may also offer the
-     Licensed Material under separate terms or conditions or stop
-     distributing the Licensed Material at any time; however, doing so
-     will not terminate this Public License.
-
-  d. Sections 1, 5, 6, 7, and 8 survive termination of this Public
-     License.
-
-
-Section 7 -- Other Terms and Conditions.
-
-  a. The Licensor shall not be bound by any additional or different
-     terms or conditions communicated by You unless expressly agreed.
-
-  b. Any arrangements, understandings, or agreements regarding the
-     Licensed Material not stated herein are separate from and
-     independent of the terms and conditions of this Public License.
-
-
-Section 8 -- Interpretation.
-
-  a. For the avoidance of doubt, this Public License does not, and
-     shall not be interpreted to, reduce, limit, restrict, or impose
-     conditions on any use of the Licensed Material that could lawfully
-     be made without permission under this Public License.
-
-  b. To the extent possible, if any provision of this Public License is
-     deemed unenforceable, it shall be automatically reformed to the
-     minimum extent necessary to make it enforceable. If the provision
-     cannot be reformed, it shall be severed from this Public License
-     without affecting the enforceability of the remaining terms and
-     conditions.
-
-  c. No term or condition of this Public License will be waived and no
-     failure to comply consented to unless expressly agreed to by the
-     Licensor.
-
-  d. Nothing in this Public License constitutes or may be interpreted
-     as a limitation upon, or waiver of, any privileges and immunities
-     that apply to the Licensor or You, including from the legal
-     processes of any jurisdiction or authority.
-
-=======================================================================
-
-Creative Commons is not a party to its public
-licenses. Notwithstanding, Creative Commons may elect to apply one of
-its public licenses to material it publishes and in those instances
-will be considered the “Licensor.” The text of the Creative Commons
-public licenses is dedicated to the public domain under the CC0 Public
-Domain Dedication. Except for the limited purpose of indicating that
-material is shared under a Creative Commons public license or as
-otherwise permitted by the Creative Commons policies published at
-creativecommons.org/policies, Creative Commons does not authorize the
-use of the trademark "Creative Commons" or any other trademark or logo
-of Creative Commons without its prior written consent including,
-without limitation, in connection with any unauthorized modifications
-to any of its public licenses or any other arrangements,
-understandings, or agreements concerning use of licensed material. For
-the avoidance of doubt, this paragraph does not form part of the
-public licenses.
-
-Creative Commons may be contacted at creativecommons.org.
+# BREIZHZION Personal Use License : BZ-1.1
+
+SPDX-License-Identifier: LicenseRef-BZ-1.1
 
+Copyright (c) 2026 BREIZHZION (association loi 1901, SIREN 488930819)
+4 rue Isabelle Sadoyan, 69100 Villeurbanne, France
+contact@breizhzion.com
+
+*Version française faisant foi. English translation follows.*
+
+---
+
+## Résumé (non contractuel)
+
+Ce que vous pouvez faire : consulter, lire, étudier, forker (lecture et
+étude uniquement), modifier pour votre usage personnel exclusif, et
+fabriquer un seul exemplaire physique pour vous-même.
+
+Ce que vous ne pouvez pas faire : fabriquer pour un tiers (même
+gratuitement, même dans le cadre d'une association ou d'un organisme à
+but non lucratif), vendre, installer pour autrui, distribuer activement,
+fournir tout service basé sur ce projet, ou utiliser l'Oeuvre pour
+entraîner un système d'IA ou alimenter un traitement automatisé de
+données.
+
+Qui peut le faire commercialement : BREIZHZION uniquement, ou tout tiers
+disposant d'une licence commerciale écrite du Titulaire.
+
+---
+
+## Article 1. Définitions
+
+**"Oeuvre"** désigne l'ensemble des fichiers publiés sous cette licence,
+dans leur version présente et dans toutes leurs versions futures publiées
+sous la licence BZ, incluant sans limitation : le code source et firmware
+(logiciels), les schémas électroniques, fichiers KiCad, fichiers Gerber
+et PCB (documentation matérielle), les fichiers d'impression 3D au format
+STL ou autre (boîtier), et les oeuvres graphiques ou visuelles (CSS,
+HTML, images, designs).
+
+**"Titulaire"** désigne BREIZHZION, association loi 1901, titulaire
+exclusif des droits patrimoniaux sur l'Oeuvre.
+
+**"Vous"** désigne la personne physique qui accepte les termes de cette
+licence en accédant à l'Oeuvre ou en l'utilisant. Aucun droit n'est
+accordé par la présente licence aux personnes morales (sociétés,
+associations, institutions, administrations), quelle que soit leur forme
+ou leur but, en dehors des droits que la loi leur confère de manière
+impérative.
+
+**"Usage personnel"** désigne tout usage réalisé par une personne
+physique agissant à titre strictement privé, en dehors de toute activité
+professionnelle, commerciale, associative, institutionnelle ou
+organisationnelle, exclusivement pour ses propres besoins, sans bénéfice
+direct ou indirect pour un tiers.
+
+**"Fabrication pour tiers"** désigne le fait de produire, assembler,
+construire ou fournir tout objet physique ou fichier numérique dérivé
+de l'Oeuvre au bénéfice d'une autre personne ou entité, que ce soit à
+titre onéreux ou gratuit.
+
+**"Fouille de textes et de données"** désigne toute technique d'analyse
+automatisée de textes ou de données visant à en dégager des informations,
+au sens de l'article 2 de la directive (UE) 2019/790, y compris
+l'entraînement, le réglage fin (fine-tuning) ou l'évaluation de tout
+système d'intelligence artificielle, modèle de langage ou outil
+d'apprentissage automatique.
+
+---
+
+## Article 2. Droits accordés
+
+Sous réserve du respect intégral des présentes conditions, le Titulaire
+vous accorde un droit personnel, non exclusif, non transférable et
+mondial, qui ne prend fin que dans les conditions de l'Article 8, aux
+fins suivantes :
+
+**2.1 Consultation et étude.** Vous pouvez lire, consulter, analyser et
+étudier l'Oeuvre sans restriction. Le fork d'un dépôt public contenant
+l'Oeuvre, via le mécanisme de fork de la plateforme d'hébergement, est
+autorisé à des fins de lecture et d'étude uniquement, à condition de
+conserver la présente licence dans son intégralité et de ne pas y
+distribuer de version modifiée.
+
+**2.2 Modification.** Vous pouvez modifier l'Oeuvre pour votre usage
+personnel tel que défini à l'Article 1. Les versions modifiées restent
+soumises à la présente licence et ne peuvent pas être distribuées.
+
+**2.3 Fabrication personnelle.** Vous pouvez fabriquer un seul exemplaire
+physique de l'Oeuvre matérielle (boîtier, circuit imprimé) pour votre
+usage personnel exclusif.
+
+**2.4 Droits impératifs.** Aucune disposition de cette licence ne
+restreint les droits que la loi vous confère de manière impérative,
+notamment : le droit d'observation, d'étude et de test du logiciel
+(directive 2009/24/CE, art. 5(3)), le droit de réaliser une copie de
+sauvegarde, et le droit de décompiler pour assurer l'interopérabilité
+dans les conditions légales.
+
+---
+
+## Article 3. Restrictions
+
+**3.1 Interdiction de fabrication pour tiers.** Vous ne pouvez en aucun
+cas fabriquer, assembler ou fournir tout objet ou fichier dérivé de
+l'Oeuvre au bénéfice d'un tiers, que ce soit à titre onéreux (vente,
+prestation, installation payante) ou à titre gratuit (don, fabrication
+bénévole, installation offerte), et quelle que soit la nature de
+l'intervenant (personne physique, entreprise, association, organisme
+caritatif, institution publique ou privée).
+
+**3.2 Interdiction d'usage commercial.** Vous ne pouvez pas utiliser
+l'Oeuvre, en tout ou partie, dans le cadre d'une activité commerciale,
+d'une prestation de services, d'une offre tarifée ou de toute activité
+générant un avantage économique direct ou indirect.
+
+**3.3 Interdiction de distribution active.** Vous ne pouvez pas
+distribuer activement, publier indépendamment, mettre à disposition sur
+un autre dépôt, sous-licencier ou transférer l'Oeuvre ou toute version
+modifiée à un tiers, à la seule exception du fork non modifié prévu à
+l'Article 2.1.
+
+**3.4 Réserve de fouille de textes et de données (opt-out IA).**
+Conformément à l'article 4, paragraphe 3, de la directive (UE) 2019/790
+et à l'article L122-5-3 du Code de la propriété intellectuelle, le
+Titulaire réserve expressément ses droits sur la fouille de textes et
+de données portant sur l'Oeuvre. En conséquence, toute reproduction ou
+extraction de l'Oeuvre, en tout ou partie, à des fins de fouille de
+textes et de données, y compris l'entraînement, le réglage fin ou
+l'évaluation de tout système d'intelligence artificielle, est interdite
+sans autorisation écrite préalable du Titulaire. Cette réserve est
+opposable à toute personne ou entité, y compris celles qui n'ont pas
+accepté la présente licence, et s'applique quelle que soit la finalité,
+commerciale ou non, de la fouille.
+
+**3.5 Interdiction de suppression des mentions.** Vous ne pouvez pas
+supprimer, modifier ou masquer les mentions de copyright, le nom du
+Titulaire, ni les références à la présente licence dans l'Oeuvre ou
+toute version modifiée.
+
+---
+
+## Article 4. Portée de la licence et marques
+
+**4.1 Portée des droits concédés.** La présente licence porte
+exclusivement sur les droits de propriété intellectuelle effectivement
+détenus par le Titulaire sur l'Oeuvre (droit d'auteur et droits voisins,
+et le cas échéant dessins et modèles ou brevets). Elle ne prétend pas
+restreindre les usages qui, en vertu de la loi applicable, ne requièrent
+aucune autorisation du Titulaire, notamment la réutilisation d'éléments
+purement fonctionnels non protégés.
+
+**4.2 Marques.** La présente licence ne concède aucun droit sur les
+marques, noms, logos ou signes distinctifs du Titulaire, notamment
+"BREIZHZION" et "Hucheor". Toute version modifiée de l'Oeuvre distribuée
+en violation de la présente licence ne peut en aucun cas être présentée
+sous ces noms ou d'une manière suggérant une approbation du Titulaire.
+
+---
+
+## Article 5. Licence commerciale
+
+L'usage commercial de l'Oeuvre, la fabrication pour tiers, l'installation
+et la maintenance de dispositifs basés sur l'Oeuvre au bénéfice de tiers
+sont réservés exclusivement au Titulaire, ou à toute personne ou entité
+ayant obtenu une licence commerciale écrite et signée du Titulaire.
+
+Pour toute demande de licence commerciale : contact@breizhzion.com
+
+---
+
+## Article 6. Absence de garantie
+
+L'Oeuvre est fournie "en l'état", sans garantie d'aucune sorte, expresse
+ou implicite, notamment sans garantie d'adéquation à un usage particulier,
+de conformité réglementaire, ou d'absence de défaut. L'utilisation de
+l'Oeuvre est faite sous votre seule responsabilité.
+
+---
+
+## Article 7. Limitation de responsabilité
+
+Dans toute la mesure permise par la loi applicable, le Titulaire ne
+pourra en aucun cas être tenu responsable de dommages directs, indirects,
+accidentels, spéciaux ou consécutifs résultant de l'utilisation ou de
+l'impossibilité d'utiliser l'Oeuvre.
+
+---
+
+## Article 8. Résiliation
+
+**8.1** Tout manquement aux conditions de la présente licence entraîne
+la résiliation automatique et immédiate des droits qui vous sont
+accordés. En dehors de ce cas, les droits accordés à l'Article 2 ne
+peuvent pas être révoqués arbitrairement par le Titulaire pour une
+version de l'Oeuvre déjà publiée.
+
+**8.2** En cas de résiliation, vous devez cesser tout usage de l'Oeuvre
+et détruire toute copie en votre possession.
+
+**8.3** Les Articles 4, 5, 6, 7 et 9 survivent à la résiliation.
+
+---
+
+## Article 9. Dispositions générales
+
+**9.1 Droit applicable et juridiction.** La présente licence est régie
+par le droit français. Tout litige relatif à son interprétation ou son
+exécution sera soumis à la compétence exclusive des tribunaux de Lyon
+(France), sous réserve des dispositions impératives protectrices des
+consommateurs qui leur permettraient de saisir une autre juridiction.
+
+**9.2 Divisibilité.** Si une clause de la présente licence est déclarée
+nulle ou inapplicable, les autres clauses demeurent pleinement en
+vigueur.
+
+**9.3 Intégralité.** La présente licence constitue l'intégralité de
+l'accord entre vous et le Titulaire concernant l'Oeuvre.
+
+**9.4 Pas de renonciation.** Le fait pour le Titulaire de ne pas exercer
+un droit prévu par la présente licence ne constitue pas une renonciation
+à ce droit.
+
+**9.5 Versions futures.** Le Titulaire se réserve le droit de publier
+de nouvelles versions de la licence BZ. L'Oeuvre est soumise à la
+version mentionnée dans ses fichiers de distribution. Une version future
+ne s'applique pas rétroactivement à une version de l'Oeuvre déjà publiée
+sous une version antérieure, sauf mention contraire explicite du
+Titulaire.
+
+---
+
+## Ce que cette licence n'est pas
+
+La licence BZ-1.1 est une licence en **accès libre** (source-available),
+pas une licence open source au sens de l'OSI (Open Source Initiative).
+Utilisez les termes "accès libre", "publié librement" ou "BZ-1.1" pour
+décrire ce projet. N'utilisez pas "open source" au sens certifié OSI.
+
+---
+---
+
+# BREIZHZION Personal Use License : BZ-1.1 (English)
+
+*The French version above is the authoritative text. This English
+translation is provided for convenience only.*
+
+SPDX-License-Identifier: LicenseRef-BZ-1.1
+
+Copyright (c) 2026 BREIZHZION (non-profit association, SIREN 488930819)
+4 rue Isabelle Sadoyan, 69100 Villeurbanne, France
+contact@breizhzion.com
+
+---
+
+## Summary (non-contractual)
+
+What you may do: read, study, fork (for reading and study only), modify
+for your own personal use only, and build one single physical copy for
+yourself.
+
+What you may not do: build for anyone else (even for free, even as a
+non-profit or charity), sell, install for others, actively distribute,
+provide any service based on this project, or use the Work to train an
+AI system or feed any automated data processing.
+
+Who may do it commercially: BREIZHZION only, or any party holding a
+written commercial license from the Licensor.
+
+---
+
+## Section 1. Definitions
+
+**"Work"** means all files published under this license, in their
+present version and in all future versions published under the BZ
+license, including without limitation: source code and firmware
+(software), electronic schematics, KiCad files, Gerber files and PCB
+designs (hardware documentation), 3D printing files in STL or other
+formats (enclosure), and graphic or visual works (CSS, HTML, images,
+designs).
+
+**"Licensor"** means BREIZHZION, the sole holder of the economic rights
+over the Work.
+
+**"You"** means the individual who accepts the terms of this license by
+accessing or using the Work. No rights are granted under this license
+to legal entities (companies, associations, institutions, public
+bodies), whatever their form or purpose, beyond the rights granted to
+them by mandatory law.
+
+**"Personal use"** means any use carried out by an individual acting in
+a strictly private capacity, outside any professional, commercial,
+associative, institutional or organizational activity, exclusively for
+their own needs, without direct or indirect benefit to any third party.
+
+**"Third-party manufacturing"** means producing, assembling, building
+or providing any physical object or digital file derived from the Work
+for the benefit of another person or entity, whether for a fee or free
+of charge.
+
+**"Text and data mining"** means any automated analytical technique
+aimed at analysing text and data in order to generate information,
+within the meaning of Article 2 of Directive (EU) 2019/790, including
+the training, fine-tuning or evaluation of any artificial intelligence
+system, language model or machine learning tool.
+
+---
+
+## Section 2. Granted Rights
+
+Subject to full compliance with these terms, the Licensor grants You a
+personal, non-exclusive, non-transferable, worldwide license, which
+terminates only under the conditions of Section 8, for the following
+purposes:
+
+**2.1 Reading and study.** You may read, consult, analyze and study the
+Work without restriction. Forking a public repository containing the
+Work, through the hosting platform's fork mechanism, is permitted for
+reading and study purposes only, provided this license is kept in full
+and no modified version is distributed through the fork.
+
+**2.2 Modification.** You may modify the Work for your personal use as
+defined in Section 1. Modified versions remain subject to this license
+and may not be distributed.
+
+**2.3 Personal manufacturing.** You may build one single physical copy
+of the hardware Work (enclosure, printed circuit board) for your own
+personal use only.
+
+**2.4 Mandatory rights.** Nothing in this license restricts rights
+granted to You by applicable mandatory law, including: the right to
+observe, study and test software (Directive 2009/24/EC, art. 5(3)), the
+right to make a backup copy, and the right to decompile for
+interoperability purposes under the applicable legal conditions.
+
+---
+
+## Section 3. Restrictions
+
+**3.1 No third-party manufacturing.** You may not manufacture, assemble
+or provide any object or file derived from the Work for the benefit of
+any third party, whether for a fee (sale, service provision, paid
+installation) or free of charge (gift, volunteer manufacturing, offered
+installation), regardless of the nature of the party (individual,
+company, association, charity, public or private institution).
+
+**3.2 No commercial use.** You may not use the Work, in whole or in
+part, in the context of any commercial activity, service provision,
+paid offering or any activity generating direct or indirect economic
+benefit.
+
+**3.3 No active distribution.** You may not actively distribute,
+independently publish, make available on another repository, sublicense
+or transfer the Work or any modified version to any third party, with
+the sole exception of the unmodified fork permitted under Section 2.1.
+
+**3.4 Text and data mining reservation (AI opt-out).** In accordance
+with Article 4(3) of Directive (EU) 2019/790 and Article L122-5-3 of
+the French Intellectual Property Code, the Licensor expressly reserves
+its rights over text and data mining of the Work. Consequently, any
+reproduction or extraction of the Work, in whole or in part, for text
+and data mining purposes, including the training, fine-tuning or
+evaluation of any artificial intelligence system, is prohibited without
+the Licensor's prior written authorization. This reservation is
+enforceable against any person or entity, including those who have not
+accepted this license, and applies regardless of whether the mining
+purpose is commercial or not.
+
+**3.5 No removal of notices.** You may not remove, modify or obscure
+any copyright notice, the Licensor's name, or any reference to this
+license in the Work or any modified version.
+
+---
+
+## Section 4. Scope of the License and Trademarks
+
+**4.1 Scope of granted rights.** This license covers exclusively the
+intellectual property rights actually held by the Licensor over the
+Work (copyright and related rights, and where applicable registered
+designs or patents). It does not purport to restrict uses which, under
+applicable law, require no authorization from the Licensor, in
+particular the reuse of purely functional, unprotected elements.
+
+**4.2 Trademarks.** This license grants no rights over the Licensor's
+trademarks, names, logos or distinctive signs, including "BREIZHZION"
+and "Hucheor". Any modified version of the Work distributed in breach
+of this license may under no circumstances be presented under these
+names or in any way suggesting endorsement by the Licensor.
+
+---
+
+## Section 5. Commercial License
+
+Commercial use of the Work, third-party manufacturing, and installation
+or maintenance of devices based on the Work for the benefit of third
+parties are reserved exclusively to the Licensor, or to any party
+holding a written and signed commercial license from the Licensor.
+
+For commercial license inquiries: contact@breizhzion.com
+
+---
+
+## Section 6. Disclaimer of Warranties
+
+The Work is provided "as is", without warranty of any kind, express or
+implied, including without limitation any warranty of fitness for a
+particular purpose, regulatory compliance, or absence of defects. Your
+use of the Work is at your sole risk.
+
+---
+
+## Section 7. Limitation of Liability
+
+To the fullest extent permitted by applicable law, the Licensor shall
+not be liable for any direct, indirect, incidental, special or
+consequential damages arising from the use or inability to use the
+Work.
+
+---
+
+## Section 8. Termination
+
+**8.1** Any breach of the terms of this license results in the
+automatic and immediate termination of the rights granted to You. Apart
+from this case, the rights granted under Section 2 may not be
+arbitrarily revoked by the Licensor for a version of the Work already
+published.
+
+**8.2** Upon termination, You must cease all use of the Work and
+destroy any copies in your possession.
+
+**8.3** Sections 4, 5, 6, 7 and 9 survive termination.
+
+---
+
+## Section 9. General Provisions
+
+**9.1 Governing law and jurisdiction.** This license is governed by
+French law. Any dispute relating to its interpretation or performance
+shall be submitted to the exclusive jurisdiction of the courts of Lyon,
+France, subject to mandatory consumer protection provisions allowing
+consumers to bring proceedings before another court.
+
+**9.2 Severability.** If any provision of this license is held invalid
+or unenforceable, the remaining provisions shall remain in full force.
+
+**9.3 Entire agreement.** This license constitutes the entire agreement
+between You and the Licensor regarding the Work.
+
+**9.4 No waiver.** The Licensor's failure to exercise any right under
+this license does not constitute a waiver of that right.
+
+**9.5 Future versions.** The Licensor reserves the right to publish new
+versions of the BZ license. The Work is subject to the version
+specified in its distribution files. A future version does not apply
+retroactively to a version of the Work already published under a prior
+version, unless explicitly stated otherwise by the Licensor.
+
+---
+
+## What this license is not
+
+BZ-1.1 is a **source-available** license, not an open source license as
+defined by the OSI (Open Source Initiative). Use the terms
+"source-available", "freely viewable" or "BZ-1.1" to describe this
+project. Do not use "open source" in the OSI-certified sense.
+
+---
+
+*BREIZHZION Personal Use License, version 1.1*
+*First published: August 2026*
+*Authoritative language: French*

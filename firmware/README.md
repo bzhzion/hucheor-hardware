@@ -12,7 +12,7 @@ sécurité, CI), ce fichier reste un résumé court par module.
   devinées ou empruntées).
 - Audio (`audio_player.h`/`.cpp`) : joue un fichier WAV PCM 16 bits mono/stéréo depuis LittleFS via
   I2S. Uniquement le driver I2S natif de l'ESP32, aucune bibliothèque audio tierce (le choix
-  évident, ESP8266Audio, est en GPLv3 : incompatible avec la licence CC BY-NC 4.0 de ce dépôt).
+  évident, ESP8266Audio, est en GPLv3 : incompatible avec la licence BZ-1.1 de ce dépôt).
 - Réseau (`network.h`/`.cpp`) : deux modes de connexion. Autonome (par défaut) crée son propre
   point d'accès WiFi (`Hucheor-XXXX`) ; station rejoint plutôt le WiFi propre du commerce, avec
   repli automatique sur le mode autonome en cas d'échec. Le mode station s'annonce via mDNS
@@ -52,12 +52,12 @@ pio run
 
 ## Licence
 
-Le code de ce dossier est sous licence CC BY-NC 4.0 (voir `LICENSE.md`/`NOTICE.md` à la racine du
-dépôt). Les dépendances tierces récupérées via PlatformIO gardent leur propre licence :
+Le code de ce dossier est sous licence BREIZHZION Personal Use License (BZ-1.1) (voir
+`LICENSE.md`/`NOTICE.md` à la racine du dépôt). Les dépendances tierces récupérées via PlatformIO
+gardent leur propre licence :
 - `CC1101-ESP-Arduino` : MIT
 - `ESPAsyncWebServer` / `AsyncTCP` : LGPL-3.0 (copyleft faible, sûr en dépendance : contrairement à
   GPL/AGPL, LGPL autorise explicitement la liaison depuis du code sous une licence différente)
 - LittleFS : fourni avec le core Arduino ESP32 lui-même, pas une dépendance séparée
 
-Écarté : `ESP8266Audio` (GPLv3 : forcerait tout ce firmware sous GPL, incompatible avec CC BY-NC
-4.0).
+Écarté : `ESP8266Audio` (GPLv3 : forcerait tout ce firmware sous GPL, incompatible avec BZ-1.1).

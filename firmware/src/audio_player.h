@@ -2,10 +2,10 @@
 
 // Minimal WAV (PCM, mono or stereo, 16-bit) playback over I2S, reading from
 // LittleFS. Deliberately not using a third-party audio library: the obvious
-// candidate (ESP8266Audio) is GPLv3, which is incompatible with the CC BY-NC
-// 4.0 license of this repository (GPL requires permitting redistribution/
-// commercial use that CC BY-NC forbids). Native I2S output only needs the
-// driver already bundled with the Arduino ESP32 core.
+// candidate (ESP8266Audio) is GPLv3, which is incompatible with this
+// repository's BZ-1.1 license (GPL requires permitting redistribution that
+// BZ-1.1 forbids). Native I2S output only needs the driver already bundled
+// with the Arduino ESP32 core.
 
 #include <Arduino.h>
 

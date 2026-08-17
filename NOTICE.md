@@ -1,28 +1,28 @@
 # Note sur la licence
 
 Tout ce qui se trouve dans ce dépôt (firmware, fichiers de conception matérielle, fichiers du
-boîtier) est sous licence **Creative Commons Attribution-NonCommercial 4.0 International
-(CC BY-NC 4.0)**, sauf mention contraire dans un fichier précis. Texte légal complet :
-[LICENSE.md](LICENSE.md).
+boîtier, éléments graphiques) est sous licence **BREIZHZION Personal Use License (BZ-1.1)**, sauf
+mention contraire dans un fichier précis. Texte légal complet : [LICENSE.md](LICENSE.md).
 
 ## Ce que ça veut dire concrètement
 
-- Vous pouvez construire une balise Hucheor pour vous-même, pour un ami gratuitement, ou pour
-  l'usage interne de votre propre organisation (y compris une entreprise qui l'utilise pour ses
-  propres besoins internes), la modifier, et partager votre version modifiée, à condition de
-  créditer BREIZHZION.
-- Vous ne pouvez pas vendre une balise Hucheor, faire payer sa construction/installation/
-  maintenance, ni la fournir de toute autre façon à un tiers en échange d'argent ou d'un avantage
-  commercial. Ça s'applique à tout le monde de la même façon, y compris aux associations à but non
-  lucratif : la clause NonCommercial de CC BY-NC 4.0 porte sur l'usage (de l'argent change-t-il de
-  main ?), pas sur le statut juridique de qui la pratique. Une association qui facture une
-  construction ou une installation fait un usage commercial au sens de cette licence, exactement
-  comme une entreprise le ferait.
+- Vous pouvez lire, étudier, forker en lecture seule, modifier pour votre usage strictement
+  personnel, et fabriquer **un seul exemplaire physique pour vous-même**.
+- Vous ne pouvez pas fabriquer pour un tiers, même gratuitement, même dans le cadre d'une
+  association ou d'un organisme à but non lucratif. Contrairement à une licence "non commerciale"
+  classique, BZ-1.1 ne se limite pas à interdire la vente : elle interdit toute fabrication pour
+  autrui, y compris bénévole, et n'accorde d'ailleurs aucun droit aux personnes morales (sociétés,
+  associations, institutions) en tant que telles - seules les personnes physiques agissant à titre
+  privé sont concernées par la licence.
+- Vous ne pouvez pas distribuer une version modifiée, ni utiliser l'oeuvre pour entraîner un
+  système d'IA ou alimenter un traitement automatisé de données (opt-out fouille de textes et de
+  données au titre de la directive (UE) 2019/790).
+- Seule BREIZHZION (ou un tiers disposant d'une licence commerciale écrite) peut fabriquer pour
+  autrui, vendre, installer ou fournir tout service basé sur ce projet.
 
 ## Précision propre à ce projet
 
-Ce projet est **en accès libre** (source-available), mais pas "open source" au sens strict de
-l'OSI : la définition OSI de l'open source impose d'autoriser l'usage commercial, ce que cette
-licence exclut volontairement. On évite donc le terme "open source" sur le site et ailleurs,
-au profit d'"accès libre" ou "publié librement" - le code et les plans sont publics et libres à
-construire pour soi-même, mais ce n'est pas la définition certifiée OSI.
+Ce projet est **en accès libre** (source-available), pas "open source" au sens strict de l'OSI :
+la définition OSI de l'open source impose d'autoriser l'usage commercial et la redistribution
+libre, ce que cette licence exclut volontairement. Utilisez "accès libre" ou "publié librement"
+pour décrire ce projet, jamais "open source" au sens certifié OSI.
