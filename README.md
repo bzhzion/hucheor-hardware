@@ -315,9 +315,9 @@ télécommande NF S32-002 : aucune constante de timing devinée ou empruntée à
 **CC BY-NC 4.0** (Attribution-NonCommercial). Voir [NOTICE.md](NOTICE.md) pour ce que ça veut dire
 en pratique, et [LICENSE.md](LICENSE.md) pour le texte légal complet. En résumé : construisez-en
 une pour vous-même, pour un ami gratuitement, ou pour l'usage interne de votre propre
-organisation, et modifiez/partagez librement, mais personne à part BREIZHZION ne peut vendre,
-faire payer, ou fournir commercialement d'une autre façon une balise Hucheor ou un appareil
-construit à partir de ces fichiers, associations à but non lucratif comprises.
+organisation, et modifiez/partagez librement, mais personne ne peut vendre, faire payer, ou
+fournir commercialement d'une autre façon une balise Hucheor ou un appareil construit à partir de
+ces fichiers, associations à but non lucratif comprises.
 
 Ce n'est volontairement **pas une licence open source au sens OSI** : la revente commerciale est
 exclue, donc ce projet doit être décrit comme en accès libre, pas open source.
