@@ -26,11 +26,3 @@ l'OSI : la définition OSI de l'open source impose d'autoriser l'usage commercia
 licence exclut volontairement. On évite donc le terme "open source" sur le site et ailleurs,
 au profit d'"accès libre" ou "publié librement" - le code et les plans sont publics et libres à
 construire pour soi-même, mais ce n'est pas la définition certifiée OSI.
-
-## Aide de BREIZHZION
-
-En tant que titulaire des droits d'auteur, BREIZHZION n'est pas liée par la licence publique
-qu'elle accorde à autrui. Pour ceux qui préfèrent ne pas s'en charger eux-mêmes, BREIZHZION peut
-proposer une aide à la construction/installation/maintenance sur des communes du Rhône (France) -
-une possibilité réservée au titulaire d'origine des droits, pas une exception commerciale ouverte
-à qui que ce soit d'autre.
