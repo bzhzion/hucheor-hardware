@@ -25,7 +25,15 @@ def new_uuid():
 
 
 def make_module_symbol(entry_name, value, left_pins, right_pins, is_power=False):
-    """left_pins/right_pins: liste de (name, number, electrical_type)."""
+    """left_pins/right_pins: liste de (name, number, electrical_type).
+
+    Suit la convention reelle de KiCad (verifiee sur des symboles officiels
+    types "Device:R") : le symbole parent ne porte que les proprietes, deux
+    sous-unites imbriquees portent le dessin (unite 0, partagee) et les
+    broches (unite 1). Un symbole avec les broches posees directement sur le
+    parent (sans ces sous-unites) est syntaxiquement valide pour kiutils mais
+    rejete par KiCad des qu'il faut resoudre les broches d'une instance
+    placee - trouve par diff contre un vrai fichier KiCad round-trippe."""
     n_left, n_right = len(left_pins), len(right_pins)
     n_max = max(n_left, n_right, 1)
     half_height = (n_max - 1) * ROW / 2 + ROW
@@ -36,7 +44,10 @@ def make_module_symbol(entry_name, value, left_pins, right_pins, is_power=False)
     symbol.pinNames = True
     symbol.pinNumbers = True
 
-    symbol.graphicItems.append(SyRect(
+    unit_graphics = Symbol(entryName=entry_name, unitId=0, styleId=1)
+    unit_pins = Symbol(entryName=entry_name, unitId=1, styleId=1)
+
+    unit_graphics.graphicItems.append(SyRect(
         start=Position(X=-half_width, Y=half_height),
         end=Position(X=half_width, Y=-half_height),
     ))
@@ -52,7 +63,7 @@ def make_module_symbol(entry_name, value, left_pins, right_pins, is_power=False)
             else:
                 x = half_width + PIN_LEN
                 angle = 0
-            symbol.pins.append(SymbolPin(
+            unit_pins.pins.append(SymbolPin(
                 electricalType=etype,
                 position=Position(X=x, Y=y, angle=angle),
                 length=PIN_LEN,
@@ -62,7 +73,17 @@ def make_module_symbol(entry_name, value, left_pins, right_pins, is_power=False)
 
     add_side(left_pins, "L")
     add_side(right_pins, "R")
+    symbol.units = [unit_graphics, unit_pins]
     return symbol
+
+
+def all_pins(symbol_def):
+    """Reunit les broches, qu'elles soient (par erreur) sur le symbole
+    parent ou (cas normal) sur une sous-unite."""
+    pins = list(symbol_def.pins)
+    for unit in symbol_def.units:
+        pins.extend(unit.pins)
+    return pins
 
 
 def place(schematic, symbol_def, ref, value, x, y, pin_side_map):
@@ -70,15 +91,21 @@ def place(schematic, symbol_def, ref, value, x, y, pin_side_map):
     {pin_name: (abs_x, abs_y)} pour poser les labels de net ensuite."""
     inst = SchematicSymbol()
     inst.libId = symbol_def.libId
-    inst.position = Position(X=x, Y=y)
+    inst.position = Position(X=x, Y=y, angle=0)
+    inst.unit = 1
     inst.inBom = True
     inst.onBoard = True
     inst.uuid = new_uuid()
+    # L'angle doit etre fixe explicitement (meme a 0) sur la position de
+    # chaque propriete ET du symbole lui-meme (voir Position ci-dessus) :
+    # kiutils omet le 3e nombre de "(at X Y)" quand angle=None, ce que
+    # KiCad 10 refuse de charger pour une instance placee (verifie par
+    # bissection contre un vrai fichier round-trippe par kiutils).
     inst.properties = [
         Property(key="Reference", value=ref, id=0,
-                  position=Position(X=x, Y=y - 15), effects=Effects(font=Font(width=1.27, height=1.27))),
+                  position=Position(X=x, Y=y - 15, angle=0), effects=Effects(font=Font(width=1.27, height=1.27))),
         Property(key="Value", value=value, id=1,
-                  position=Position(X=x, Y=y - 12.5), effects=Effects(font=Font(width=1.27, height=1.27))),
+                  position=Position(X=x, Y=y - 12.5, angle=0), effects=Effects(font=Font(width=1.27, height=1.27))),
     ]
     inst.instances = [SymbolProjectInstance(
         name=PROJECT_NAME,
@@ -86,7 +113,7 @@ def place(schematic, symbol_def, ref, value, x, y, pin_side_map):
     )]
 
     pin_positions = {}
-    for pin in symbol_def.pins:
+    for pin in all_pins(symbol_def):
         inst.pins[pin.number] = new_uuid()
         pin_positions[pin.name] = (x + pin.position.X, y + pin.position.Y)
 
