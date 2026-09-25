@@ -17,7 +17,7 @@ jobs:
   build:
     runs-on: [self-hosted, linux, x64, docker]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # actions/setup-python failed trying to fetch a build for this runner's
       # OS ("Version 3.12 ... was not found for Debian 13"), and this
